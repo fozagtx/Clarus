@@ -123,7 +123,7 @@ export function Dashboard() {
           <Stat label="INGEST" value={String(board.health.ingestions)} />
           <Stat label="PASS" value={String(board.health.passed)} accent="#7dffb3" />
           <Stat label="REJECT" value={String(board.health.rejected)} accent="#ff5d73" />
-          <Stat label="AVG PIPE" value={`${board.health.avgPipelineMs || "—"}ms`} />
+          <Stat label="AVG PIPE" value={`${board.health.avgPipelineMs}ms`} />
           <Stat label="FILTER" value={`${rejectRate}%`} />
         </div>
       </header>
@@ -203,7 +203,7 @@ export function Dashboard() {
           {view === "payload" ? <PayloadView result={latestPass} /> : null}
         </div>
         <aside className="flex flex-col gap-4">
-          <PipelineStrip result={latestInspect} />
+          <PipelineStrip result={view === "payload" ? latestPass : latestInspect} />
           <EventLog events={board.events} onPick={(e) => e.result && setSelected(e.result)} />
         </aside>
       </section>
