@@ -2,7 +2,7 @@
   "name": "clarus",
   "version": "0.1.0",
   "private": true,
-  "description": "Clarus: event-driven on-chain clarity agent. Researches launch signals, runs a four-layer safety firewall, and emits one-click wallet execution links. Never holds private keys.",
+  "description": "Clarus: Binance Agent OS Track A researcher for BNB Chain. Six-gate firewall, unsigned PancakeSwap / Binance Web3 payloads. Never holds private keys.",
   "scripts": {
     "dev": "next dev -p 3000",
     "build": "next build",

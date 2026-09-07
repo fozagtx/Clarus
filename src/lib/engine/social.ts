@@ -1,10 +1,14 @@
 import { SOCIAL_KEYWORDS } from "./types";
 
-const CA_RE = /[1-9A-HJ-NP-Za-km-z]{32,44}/g;
+const EVM_RE = /0x[a-fA-F0-9]{40}/g;
+
+export function isEvmAddress(value: string): boolean {
+  return /^0x[a-fA-F0-9]{40}$/.test(value.trim());
+}
 
 export function extractContractAddresses(text: string): string[] {
-  const hits = text.match(CA_RE) ?? [];
-  return [...new Set(hits.filter((ca) => ca.length >= 32 && ca.length <= 44))];
+  const hits = text.match(EVM_RE) ?? [];
+  return [...new Set(hits.map((ca) => ca.toLowerCase()))];
 }
 
 export function matchSocialKeywords(text: string): string[] {

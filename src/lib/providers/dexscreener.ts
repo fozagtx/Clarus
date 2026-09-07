@@ -1,4 +1,7 @@
 import { scoreNarrative } from "@/lib/engine/social";
+import { QUOTE_TOKENS } from "@/lib/engine/types";
+
+const BSC = "bsc";
 
 export interface DexPair {
   chainId?: string;
@@ -24,18 +27,30 @@ export interface DexProfile {
   links?: Array<{ type?: string; label?: string; url?: string }>;
 }
 
-export async function fetchDexPairs(mint: string): Promise<DexPair[]> {
-  const res = await fetch(`https://api.dexscreener.com/latest/dex/tokens/${mint}`, {
+function isBsc(chainId?: string) {
+  return (chainId ?? "").toLowerCase() === BSC;
+}
+
+export async function fetchDexPairs(address: string): Promise<DexPair[]> {
+  const res = await fetch(`https://api.dexscreener.com/latest/dex/tokens/${address}`, {
     cache: "no-store",
     headers: { accept: "application/json" },
   });
   if (!res.ok) return [];
   const data = (await res.json()) as { pairs?: DexPair[] };
-  return (data.pairs ?? []).filter((p) => (p.chainId ?? "").toLowerCase() === "solana");
+  return (data.pairs ?? []).filter((p) => isBsc(p.chainId));
 }
 
-export function bestSolanaPair(pairs: DexPair[]): DexPair | undefined {
+export function bestBscPair(pairs: DexPair[]): DexPair | undefined {
   return [...pairs].sort((a, b) => (b.liquidity?.usd ?? 0) - (a.liquidity?.usd ?? 0))[0];
+}
+
+export function targetAddressFromPair(pair: DexPair): string | undefined {
+  const base = (pair.baseToken?.address ?? "").toLowerCase();
+  const quote = (pair.quoteToken?.address ?? "").toLowerCase();
+  if (base && !QUOTE_TOKENS.has(base)) return base;
+  if (quote && !QUOTE_TOKENS.has(quote)) return quote;
+  return undefined;
 }
 
 export async function fetchDexBoosts() {
@@ -50,7 +65,7 @@ export async function fetchDexBoosts() {
     description?: string;
     links?: Array<{ type?: string; url?: string }>;
   }>;
-  return Array.isArray(data) ? data.filter((d) => d.chainId === "solana") : [];
+  return Array.isArray(data) ? data.filter((d) => isBsc(d.chainId)) : [];
 }
 
 export async function fetchDexProfiles(): Promise<DexProfile[]> {
@@ -60,7 +75,19 @@ export async function fetchDexProfiles(): Promise<DexProfile[]> {
   });
   if (!res.ok) return [];
   const data = (await res.json()) as DexProfile[];
-  return Array.isArray(data) ? data.filter((d) => d.chainId === "solana") : [];
+  return Array.isArray(data) ? data.filter((d) => isBsc(d.chainId)) : [];
+}
+
+export async function fetchDexBscSearch(query = "WBNB"): Promise<DexPair[]> {
+  const res = await fetch(`https://api.dexscreener.com/latest/dex/search?q=${encodeURIComponent(query)}`, {
+    cache: "no-store",
+    headers: { accept: "application/json" },
+  });
+  if (!res.ok) return [];
+  const data = (await res.json()) as { pairs?: DexPair[] };
+  return (data.pairs ?? [])
+    .filter((p) => isBsc(p.chainId))
+    .sort((a, b) => (b.pairCreatedAt ?? 0) - (a.pairCreatedAt ?? 0));
 }
 
 export function socialFromDex(profile?: DexProfile, pair?: DexPair) {

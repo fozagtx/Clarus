@@ -135,7 +135,7 @@ export function Dashboard() {
               CLARUS
             </h1>
             <p className="mt-2 max-w-xl text-sm text-[#8a93a3]">
-              Four-layer on-chain firewall. One-click wallet payload.
+              Binance Agent OS · BNB Chain firewall. Unsigned wallet payload.
               Private keys never enter this process.
             </p>
           </div>
@@ -192,14 +192,14 @@ export function Dashboard() {
           e.preventDefault();
           void run("/api/evaluate", {
             headers: { "content-type": "application/json" },
-            body: JSON.stringify({ mint }),
+            body: JSON.stringify({ address: mint, mint }),
           });
         }}
       >
         <input
           value={mint}
           onChange={(e) => setMint(e.target.value)}
-          placeholder="Paste a Solana CA — firewall evaluates in-process, never asks for a key"
+          placeholder="Paste a BNB Chain CA (0x…) — firewall evaluates in-process, never asks for a key"
           className="flex-1 border border-[var(--line)] bg-transparent px-3 py-3 text-sm outline-none"
         />
         <button className="bg-[#7dffb3] px-4 py-3 text-xs font-semibold tracking-[0.2em] text-[#07140c]">
@@ -252,8 +252,8 @@ function RadarView({ events, results }: { events: PipelineEvent[]; results: Eval
         </div>
       </div>
       <p className="mt-3 text-sm text-[#8a93a3]">
-        Live rotation across Jupiter recent launches, Dexscreener profiles/boosts, and RugCheck new mints.
-        Each CA is enriched from Dexscreener tape, RugCheck LP lock, and Solana RPC authorities/holders.
+        Live rotation across GeckoTerminal BSC new/trending pools and Dexscreener BNB Chain profiles.
+        Each CA is enriched from Dexscreener tape and GoPlus token security (mint, honeypot, LP lock, holders).
       </p>
       <div className="mt-5 overflow-hidden border border-[var(--line)]">
         <div className="ticker flex min-w-max gap-8 py-2 text-[11px] tracking-[0.2em] text-[#7dffb3]">
@@ -262,7 +262,7 @@ function RadarView({ events, results }: { events: PipelineEvent[]; results: Eval
               {r.token.symbol} {r.status} {shortCa(r.token.contractAddress)}
             </span>
           ))}
-          {results.length === 0 ? <span>AWAITING LIVE ROTATION · JUPITER / DEXSCREENER / RUGCHECK</span> : null}
+          {results.length === 0 ? <span>AWAITING LIVE ROTATION · GECKOTERMINAL / DEXSCREENER / GOPLUS</span> : null}
         </div>
       </div>
       <ul className="mt-5 space-y-2">
@@ -355,7 +355,7 @@ function PayloadView({ result }: { result: EvaluationResult | null }) {
         <p className="text-[11px] tracking-[0.3em] text-[#7dffb3]">PHASE 4 · USER EXECUTION</p>
         <h2 className="mt-1 font-[var(--font-display)] text-3xl">No clear payload yet</h2>
         <p className="mt-3 max-w-lg text-sm text-[#8a93a3]">
-          The agent does not trade. When a token clears every gate, a Jupiter / Binance Web3 deep link appears here
+          The agent does not trade. When a token clears every gate, a PancakeSwap / Binance Web3 deep link appears here
           for FaceID or passcode signing in your wallet app.
         </p>
       </div>
@@ -395,11 +395,11 @@ function PayloadView({ result }: { result: EvaluationResult | null }) {
         <div className="mt-5 flex flex-wrap gap-2">
           <a
             className="bg-[#7dffb3] px-4 py-3 text-xs font-semibold tracking-[0.16em] text-[#07140c]"
-            href={payload.jupiterUrl}
+            href={payload.pancakeSwapUrl}
             target="_blank"
             rel="noreferrer"
           >
-            OPEN JUPITER WALLET FLOW
+            OPEN PANCAKESWAP WALLET FLOW
           </a>
           <a
             className="border border-[var(--line)] px-4 py-3 text-xs tracking-[0.16em] text-[#8ad4ff]"
@@ -419,7 +419,7 @@ function PayloadView({ result }: { result: EvaluationResult | null }) {
           </a>
         </div>
         <p className="mt-4 text-[11px] text-[#8a93a3]">
-          Deep link only. Signing stays in Phantom, Solflare, or Binance Web3. Clarus cannot see or store keys.
+          Deep link only. Signing stays in Binance Web3 or your BNB Chain wallet. Clarus cannot see or store keys.
         </p>
       </div>
     </div>

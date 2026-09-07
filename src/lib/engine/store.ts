@@ -53,7 +53,7 @@ export function recordEvaluation(result: EvaluationResult, ingest: boolean) {
       kind: "alert",
       ca: result.token.contractAddress,
       name: result.token.name,
-      detail: "Execution payload dispatched to dashboard (and Telegram if configured).",
+      detail: "Execution payload dispatched to the HUD. Signing stays in Binance Web3 / the connected wallet.",
       result,
     });
   } else {
