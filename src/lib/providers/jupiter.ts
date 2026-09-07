@@ -45,12 +45,7 @@ function volumeOf(stats?: JupiterStats): number {
 
 function inferLpLockedPercent(token: JupiterToken): number {
   const launchpad = (token.launchpad ?? "").toLowerCase();
-  if (launchpad.includes("pump")) {
-    return 0;
-  }
-  if (token.liquidity && token.liquidity > 0 && token.audit?.mintAuthorityDisabled) {
-    return 96;
-  }
+  if (launchpad.includes("pump")) return 0;
   return 0;
 }
 
@@ -83,10 +78,7 @@ function inferBundled(token: JupiterToken): { bundled: boolean; reason?: string 
 
 export function jupiterToSnapshot(token: JupiterToken): TokenSnapshot {
   const bundle = inferBundled(token);
-  const maxHolder = Math.max(
-    token.audit?.devBalancePercentage ?? 0,
-    token.audit?.topHoldersPercentage ? token.audit.topHoldersPercentage / 4 : 0,
-  );
+  const maxHolder = token.audit?.devBalancePercentage;
   const name = token.name || "Unknown";
   const symbol = token.symbol || "???";
 
@@ -109,7 +101,7 @@ export function jupiterToSnapshot(token: JupiterToken): TokenSnapshot {
     isMintDisabled: token.audit?.mintAuthorityDisabled === true,
     isFreezeDisabled: token.audit?.freezeAuthorityDisabled === true,
     lpLockedPercent: inferLpLockedPercent(token),
-    maxHolderPercent: Number(maxHolder.toFixed(4)),
+    maxHolderPercent: Number((maxHolder ?? 100).toFixed(4)),
     isHighlyBundled: bundle.bundled,
     bundleReason: bundle.reason,
     socialHits: scoreNarrative(name, symbol, `${token.twitter ?? ""} ${token.website ?? ""}`),

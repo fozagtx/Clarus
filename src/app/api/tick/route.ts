@@ -5,7 +5,7 @@ export const dynamic = "force-dynamic";
 
 export async function POST() {
   try {
-    const board = await tickLive(16);
+    const board = await tickLive();
     return NextResponse.json(board);
   } catch (error) {
     return NextResponse.json(

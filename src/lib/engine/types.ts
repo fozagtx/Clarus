@@ -74,7 +74,7 @@ export interface TokenSnapshot {
   symbol: string;
   icon?: string;
   launchpad?: string;
-  source: "jupiter" | "dexscreener" | "rpc" | "demo" | "manual";
+  source: "jupiter" | "dexscreener" | "rugcheck" | "rpc" | "manual";
   twitter?: string;
   website?: string;
   discoveredAt: string;

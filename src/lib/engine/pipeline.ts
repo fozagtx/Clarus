@@ -1,40 +1,60 @@
 import { evaluateDiscoveredToken } from "@/lib/engine/evaluate";
-import { DEMO_TOKENS } from "@/lib/engine/demo";
 import { hasSeen, markSeen, recordEvaluation, recordIngest, snapshot } from "@/lib/engine/store";
 import type { TokenSnapshot } from "@/lib/engine/types";
-import { fetchDexPairs, bestSolanaPair } from "@/lib/providers/dexscreener";
+import {
+  bestSolanaPair,
+  fetchDexBoosts,
+  fetchDexPairs,
+  fetchDexProfiles,
+  socialFromDex,
+} from "@/lib/providers/dexscreener";
 import { fetchJupiterRecent, fetchJupiterToken, jupiterToSnapshot } from "@/lib/providers/jupiter";
+import {
+  fetchRugCheckNewTokens,
+  fetchRugCheckSummary,
+  singleHolderPercent,
+} from "@/lib/providers/rugcheck";
 import { getLargestHolderPercent, getMintAuthorities } from "@/lib/providers/solana";
 import { dispatchTelegramAlert } from "@/lib/providers/telegram";
 
+const BATCH = 3;
+let rotateCursor = 0;
+
 async function enrichFromChain(token: TokenSnapshot): Promise<TokenSnapshot> {
-  const [mint, holderPct] = await Promise.all([
+  const [mint, holderPct, rug, pairs] = await Promise.all([
     getMintAuthorities(token.contractAddress),
     getLargestHolderPercent(token.contractAddress),
+    fetchRugCheckSummary(token.contractAddress),
+    fetchDexPairs(token.contractAddress),
   ]);
 
   if (mint) {
     token.isMintDisabled = mint.mintAuthority == null;
     token.isFreezeDisabled = mint.freezeAuthority == null;
   }
-  if (holderPct != null) {
-    token.maxHolderPercent = holderPct;
+  const launchpad = (token.launchpad ?? "").toLowerCase();
+  const pumpish = launchpad.includes("pump") || token.contractAddress.toLowerCase().endsWith("pump");
+  if (pumpish) {
+    token.lpLockedPercent = 0;
+  } else if (typeof rug?.lpLockedPct === "number") {
+    token.lpLockedPercent = rug.lpLockedPct;
   }
 
-  try {
-    const pair = bestSolanaPair(await fetchDexPairs(token.contractAddress));
-    if (pair) {
-      token.liquidityUsd = pair.liquidity?.usd ?? token.liquidityUsd;
-      token.volume1h = pair.volume?.h1 ?? token.volume1h;
-      token.volume24h = pair.volume?.h24 ?? token.volume24h;
-      token.marketCap = pair.marketCap ?? pair.fdv ?? token.marketCap;
-      token.priceUsd = Number(pair.priceUsd ?? token.priceUsd);
-      if ((pair.dexId ?? "").toLowerCase().includes("raydium") && token.lpLockedPercent < 95) {
-        token.lpLockedPercent = Math.max(token.lpLockedPercent, 0);
-      }
+  const rugHolder = singleHolderPercent(rug);
+  if (holderPct != null) token.maxHolderPercent = holderPct;
+  else if (rugHolder != null) token.maxHolderPercent = rugHolder;
+
+  const pair = bestSolanaPair(pairs);
+  if (pair) {
+    token.liquidityUsd = pair.liquidity?.usd ?? token.liquidityUsd;
+    token.volume1h = pair.volume?.h1 ?? token.volume1h;
+    token.volume24h = pair.volume?.h24 ?? token.volume24h;
+    token.marketCap = pair.marketCap ?? pair.fdv ?? token.marketCap;
+    token.priceUsd = Number(pair.priceUsd ?? token.priceUsd);
+    if (!token.name || token.name === "Unknown" || token.name === "Manual scan") {
+      token.name = pair.baseToken?.name || token.name;
+      token.symbol = pair.baseToken?.symbol || token.symbol;
     }
-  } catch {
-    /* Dexscreener is enrichment, not a hard dependency */
   }
 
   return token;
@@ -45,7 +65,7 @@ export async function runToken(token: TokenSnapshot, ingest: boolean) {
     recordIngest(
       token.contractAddress,
       token.name,
-      `CA locked from ${token.source} in <500ms. Forwarding to firewall.`,
+      `CA locked from ${token.source}. Forwarding to firewall.`,
     );
   }
   const result = evaluateDiscoveredToken(token);
@@ -56,18 +76,81 @@ export async function runToken(token: TokenSnapshot, ingest: boolean) {
   return result;
 }
 
-export async function tickLive(limit = 12) {
-  const recent = await fetchJupiterRecent(limit);
-  const fresh = recent.filter((t) => t.id && !hasSeen(t.id)).slice(0, 8);
+async function collectLiveMints() {
+  const [jup, boosts, profiles, rugNew] = await Promise.all([
+    fetchJupiterRecent(24).catch(() => []),
+    fetchDexBoosts().catch(() => []),
+    fetchDexProfiles().catch(() => []),
+    fetchRugCheckNewTokens().catch(() => []),
+  ]);
+
+  const jupById = new Map(jup.map((t) => [t.id, t]));
+  const ordered: Array<{ mint: string; source: TokenSnapshot["source"] }> = [];
+  const push = (mint: string | undefined, source: TokenSnapshot["source"]) => {
+    if (!mint || ordered.some((x) => x.mint === mint)) return;
+    ordered.push({ mint, source });
+  };
+
+  const buckets: Array<Array<{ mint: string; source: TokenSnapshot["source"] }>> = [
+    jup.map((t) => ({ mint: t.id, source: "jupiter" as const })),
+    [
+      ...boosts.map((b) => ({ mint: b.tokenAddress ?? "", source: "dexscreener" as const })),
+      ...profiles.map((p) => ({ mint: p.tokenAddress ?? "", source: "dexscreener" as const })),
+    ],
+    rugNew.map((t) => ({ mint: t.mint ?? "", source: "rugcheck" as const })),
+  ];
+
+  const start = rotateCursor % buckets.length;
+  rotateCursor += 1;
+  for (let i = 0; i < buckets.length; i += 1) {
+    for (const item of buckets[(start + i) % buckets.length]) {
+      push(item.mint, item.source);
+    }
+  }
+  return { ordered, jupById, profiles };
+}
+
+export async function tickLive() {
+  const { ordered, jupById, profiles } = await collectLiveMints();
+  const fresh = ordered.filter((t) => t.mint && !hasSeen(t.mint)).slice(0, BATCH);
   const processed = [];
 
-  for (const raw of fresh) {
-    markSeen(raw.id);
-    const snapshotToken = jupiterToSnapshot(raw);
-    processed.push(await runToken(snapshotToken, true));
+  for (const item of fresh) {
+    markSeen(item.mint);
+    const jup = jupById.get(item.mint) ?? (await fetchJupiterToken(item.mint));
+    let token: TokenSnapshot = jup
+      ? { ...jupiterToSnapshot(jup), source: item.source }
+      : {
+          contractAddress: item.mint,
+          name: "Unknown",
+          symbol: item.mint.slice(0, 4),
+          source: item.source,
+          discoveredAt: new Date().toISOString(),
+          marketCap: 0,
+          volume1h: 0,
+          volume24h: 0,
+          liquidityUsd: 0,
+          priceUsd: 0,
+          isMintDisabled: false,
+          isFreezeDisabled: false,
+          lpLockedPercent: 0,
+          maxHolderPercent: 100,
+          isHighlyBundled: false,
+          socialHits: [],
+        };
+
+    const profile = profiles.find((p) => p.tokenAddress === item.mint);
+    const social = socialFromDex(profile);
+    if (social.twitter) token.twitter = social.twitter;
+    if (social.socialHits.length) {
+      token.socialHits = [...new Set([...token.socialHits, ...social.socialHits])];
+    }
+
+    token = await enrichFromChain(token);
+    processed.push(await runToken(token, true));
   }
 
-  return { processed, ...snapshot() };
+  return { processed, rotateCursor, ...snapshot() };
 }
 
 export async function evaluateMint(mint: string) {
@@ -96,15 +179,6 @@ export async function evaluateMint(mint: string) {
   const enriched = await enrichFromChain(base);
   markSeen(mint);
   return runToken(enriched, true);
-}
-
-export async function runDemoSweep() {
-  const processed = [];
-  for (const token of DEMO_TOKENS) {
-    markSeen(token.contractAddress);
-    processed.push(await runToken({ ...token, discoveredAt: new Date().toISOString() }, true));
-  }
-  return { processed, ...snapshot() };
 }
 
 export function getBoard() {

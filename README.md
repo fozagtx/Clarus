@@ -10,7 +10,7 @@ Clarus does **not** trade. It watches high-velocity Solana launches, runs a stri
 
 ## What it does
 
-1. **Ingest** — Jupiter `tokens/v2/recent` for new pairs / Pump.fun launches, Dexscreener for tape, optional Helius/Solana RPC for mint state. Social keywords (viral, listing, animal topics, etc.) are scored against name, ticker, and links. The contract address is locked and forwarded in under 500ms of process time.
+1. **Ingest** — Rotates live CAs from Jupiter recent launches, Dexscreener profiles/boosts (including X/Twitter links), and RugCheck new mints. Each address is enriched from Dexscreener tape, RugCheck LP lock %, and Solana RPC mint/holder state. No demo or mock tokens.
 2. **Shield** — four hard stops:
    - mint + freeze authorities must be disabled
    - LP must be ≥95% locked or burned
@@ -39,11 +39,11 @@ npm test
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000).
+Open [http://localhost:3000](http://localhost:3000). Rotation starts immediately.
 
-- **Run 6-token demo** — fixtures that pass, fail mint, fail LP, fail holder cap, fail bundles, and fail volume/MC.
-- **Arm live Jupiter feed** — polls public Jupiter recent tokens and evaluates each new CA.
-- **Paste a CA** — one-shot evaluate through the same engine.
+- **Rotation on** — cycles Jupiter, Dexscreener, and RugCheck every 5s
+- **Rotate once** — one live batch of unseen CAs
+- **Paste a CA** — one-shot evaluate through the same live enrichers
 
 Optional env (see `.env.example`):
 
@@ -61,7 +61,7 @@ Optional env (see `.env.example`):
 
 - Next.js 15 + TypeScript operator HUD
 - Pure evaluation engine (`src/lib/engine`) with Vitest coverage of the PRD gates
-- Jupiter lite-api + quote-api, Dexscreener REST, Solana JSON-RPC
+- Jupiter lite-api + quote-api, Dexscreener REST, RugCheck summaries, Solana JSON-RPC
 - Telegram Bot API (optional)
 - `agent/workflow.json` — IF/THEN skill card for Binance Agent OS / MCP wiring
 
@@ -72,8 +72,7 @@ The engine is side-effect free. Providers fetch. The dashboard and Telegram only
 | Method | Path | Purpose |
 | --- | --- | --- |
 | GET | `/api/events` | HUD snapshot |
-| POST | `/api/demo` | Contest fixture sweep |
-| POST | `/api/tick` | One live Jupiter ingest cycle |
+| POST | `/api/tick` | One live rotation batch |
 | POST | `/api/evaluate` | `{ "mint": "<CA>" }` |
 | POST | `/api/reset` | Clear in-memory log |
 | GET | `/api/quote?mint=<CA>&amount=<lamports>` | Jupiter route quote (unsigned) |

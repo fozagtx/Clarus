@@ -1,6 +1,5 @@
 import { describe, expect, it } from "vitest";
 import { evaluateDiscoveredToken } from "./evaluate";
-import { DEMO_TOKENS } from "./demo";
 import { extractContractAddresses, matchSocialKeywords } from "./social";
 import { estimateConstantProductSlippagePct, fitTradeSizeToSlippage } from "./slippage";
 import { largestNonAmmPercent } from "./firewall";
@@ -8,10 +7,10 @@ import type { TokenSnapshot } from "./types";
 
 function token(overrides: Partial<TokenSnapshot> = {}): TokenSnapshot {
   return {
-    contractAddress: "Ca11111111111111111111111111111111111111111",
+    contractAddress: "7xKXtg2CW87d97TXJSDpbD5jBkheTqA83TZRuJosgAsU",
     name: "Fixture",
     symbol: "FIX",
-    source: "demo",
+    source: "manual",
     discoveredAt: new Date().toISOString(),
     marketCap: 100_000,
     volume1h: 90_000,
@@ -62,25 +61,18 @@ describe("evaluateDiscoveredToken", () => {
   });
 
   it("passes a fully clear token and builds a Jupiter deep link", () => {
-    const result = evaluateDiscoveredToken(DEMO_TOKENS[0]);
+    const clear = token();
+    const result = evaluateDiscoveredToken(clear);
     expect(result.status).toBe("PASSED");
-    expect(result.execution?.jupiterUrl).toContain(DEMO_TOKENS[0].contractAddress);
+    expect(result.execution?.jupiterUrl).toContain(clear.contractAddress);
     expect(result.execution?.binanceWeb3Url).toContain("binance.com");
     expect(result.checks.every((c) => c.status === "pass")).toBe(true);
   });
 
   it("never asks for a private key in the payload", () => {
-    const result = evaluateDiscoveredToken(DEMO_TOKENS[0]);
+    const result = evaluateDiscoveredToken(token());
     const blob = JSON.stringify(result.execution);
     expect(blob.toLowerCase()).not.toMatch(/private key|seed|mnemonic/);
-  });
-});
-
-describe("demo fixtures", () => {
-  it("covers each rejection class", () => {
-    const statuses = DEMO_TOKENS.map((t) => evaluateDiscoveredToken(t));
-    expect(statuses.filter((s) => s.status === "PASSED")).toHaveLength(1);
-    expect(statuses.filter((s) => s.status === "REJECTED").length).toBeGreaterThanOrEqual(4);
   });
 });
 

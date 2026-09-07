@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { AgentHealth, EvaluationResult, PipelineEvent } from "@/lib/engine/types";
 
 type View = "radar" | "shield" | "payload";
@@ -48,9 +48,10 @@ export function Dashboard() {
   const [board, setBoard] = useState<Board>(EMPTY);
   const [busy, setBusy] = useState<string | null>(null);
   const [mint, setMint] = useState("");
-  const [live, setLive] = useState(false);
+  const [live, setLive] = useState(true);
   const [selected, setSelected] = useState<EvaluationResult | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const ticking = useRef(false);
 
   const refresh = useCallback(async () => {
     const res = await fetch("/api/events", { cache: "no-store" });
@@ -64,15 +65,27 @@ export function Dashboard() {
 
   useEffect(() => {
     if (!live) return;
-    const id = window.setInterval(async () => {
+    let cancelled = false;
+    const tick = async () => {
+      if (ticking.current) return;
+      ticking.current = true;
       try {
         await fetch("/api/tick", { method: "POST" });
-        await refresh();
+        if (!cancelled) await refresh();
       } catch {
         /* keep the HUD alive even if a tick fails */
+      } finally {
+        ticking.current = false;
       }
-    }, 4500);
-    return () => window.clearInterval(id);
+    };
+    void tick();
+    const id = window.setInterval(() => {
+      void tick();
+    }, 5000);
+    return () => {
+      cancelled = true;
+      window.clearInterval(id);
+    };
   }, [live, refresh]);
 
   const run = useCallback(
@@ -152,24 +165,17 @@ export function Dashboard() {
         </nav>
         <div className="flex flex-wrap gap-2">
           <button
-            className="border border-[var(--line)] px-3 py-2 text-xs text-[#7dffb3]"
-            onClick={() => void run("/api/demo")}
-            disabled={!!busy}
-          >
-            {busy === "/api/demo" ? "RUNNING DEMO…" : "RUN 6-TOKEN DEMO"}
-          </button>
-          <button
             className={`border px-3 py-2 text-xs ${live ? "border-[#7dffb3] text-[#7dffb3]" : "border-[var(--line)] text-[#8a93a3]"}`}
             onClick={() => setLive((v) => !v)}
           >
-            {live ? "LIVE FEED ON" : "ARM LIVE JUPITER FEED"}
+            {live ? "ROTATION ON" : "RESUME ROTATION"}
           </button>
           <button
             className="border border-[var(--line)] px-3 py-2 text-xs text-[#8a93a3]"
             onClick={() => void run("/api/tick")}
             disabled={!!busy}
           >
-            TICK ONCE
+            ROTATE ONCE
           </button>
           <button
             className="border border-[var(--line)] px-3 py-2 text-xs text-[#ffb45a]"
@@ -246,8 +252,8 @@ function RadarView({ events, results }: { events: PipelineEvent[]; results: Eval
         </div>
       </div>
       <p className="mt-3 text-sm text-[#8a93a3]">
-        Jupiter recent pairs + Dexscreener enrichment. Social keywords are scored against name/symbol/links.
-        Contract addresses lock in under 500ms, then the shield decides.
+        Live rotation across Jupiter recent launches, Dexscreener profiles/boosts, and RugCheck new mints.
+        Each CA is enriched from Dexscreener tape, RugCheck LP lock, and Solana RPC authorities/holders.
       </p>
       <div className="mt-5 overflow-hidden border border-[var(--line)]">
         <div className="ticker flex min-w-max gap-8 py-2 text-[11px] tracking-[0.2em] text-[#7dffb3]">
@@ -256,13 +262,13 @@ function RadarView({ events, results }: { events: PipelineEvent[]; results: Eval
               {r.token.symbol} {r.status} {shortCa(r.token.contractAddress)}
             </span>
           ))}
-          {results.length === 0 ? <span>AWAITING SIGNAL · ARM LIVE FEED OR RUN DEMO</span> : null}
+          {results.length === 0 ? <span>AWAITING LIVE ROTATION · JUPITER / DEXSCREENER / RUGCHECK</span> : null}
         </div>
       </div>
       <ul className="mt-5 space-y-2">
         {ingest.length === 0 ? (
           <li className="border border-dashed border-[var(--line)] p-4 text-sm text-[#8a93a3]">
-            No ingestions yet. Run the six-token demo for a full contest walkthrough, or arm the live Jupiter feed.
+            No ingestions yet. Rotation pulls real launches automatically. You can also paste a CA.
           </li>
         ) : (
           ingest.map((e) => (
@@ -322,7 +328,7 @@ function ShieldView({
           </ol>
         </div>
       ) : (
-        <p className="mt-8 text-sm text-[#8a93a3]">Inspect a token from the radar or demo sweep.</p>
+        <p className="mt-8 text-sm text-[#8a93a3]">Inspect a token from the live radar.</p>
       )}
       <div className="mt-6 grid gap-2">
         {results.slice(0, 8).map((r) => (
