@@ -1,21 +1,41 @@
-export const SOL_MINT = "So11111111111111111111111111111111111111112";
-export const USDC_MINT = "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v";
-export const USDT_MINT = "Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB";
+export const BSC_CHAIN_ID = 56;
+export const WBNB_ADDRESS = "0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c";
+export const USDT_BSC = "0x55d398326f99059fF775485246999027B3197955";
+export const USDC_BSC = "0x8AC76a51cc950d9822D68b83fE1Ad97B32Cd580d";
+export const BUSD_BSC = "0xe9e7CEA3DedcA5984780Bafc599bD69ADdA41e31";
+
+export const QUOTE_TOKENS = new Set(
+  [WBNB_ADDRESS, USDT_BSC, USDC_BSC, BUSD_BSC].map((a) => a.toLowerCase()),
+);
 
 export const DEAD_ADDRESSES = new Set([
-  "11111111111111111111111111111111",
-  "1nc1nerator11111111111111111111111111111111",
+  "0x0000000000000000000000000000000000000000",
+  "0x000000000000000000000000000000000000dead",
+  "0x000000000000000000000000000000000000dEaD".toLowerCase(),
 ]);
 
 export const AMM_OWNER_HINTS = [
-  "pump",
-  "raydium",
-  "orca",
-  "meteora",
-  "whirlpool",
-  "amm",
+  "pancake",
+  "pcs",
+  "four.meme",
+  "fourmeme",
+  "bakery",
+  "biswap",
+  "thena",
+  "apeswap",
+  "pinklock",
+  "pinksale",
+  "unicrypt",
+  "dxsale",
+  "team.finance",
+  "locker",
+  "lock",
+  "pair",
   "vault",
   "pool",
+  "amm",
+  "lp",
+  "router",
 ];
 
 export const DEFAULT_THRESHOLDS = {
@@ -39,12 +59,15 @@ export const SOCIAL_KEYWORDS = [
   "animal",
   "elon",
   "binance",
+  "bnb",
   "listing",
   "graduation",
   "pump",
   "moon",
   "ai",
   "agent",
+  "cz",
+  "four.meme",
 ];
 
 export type CheckId =
@@ -58,6 +81,8 @@ export type CheckId =
 export type CheckStatus = "pass" | "fail" | "skip";
 
 export type PipelineStatus = "PASSED" | "REJECTED";
+
+export type TokenSource = "geckoterminal" | "dexscreener" | "binance" | "manual";
 
 export interface FirewallCheck {
   id: CheckId;
@@ -74,7 +99,7 @@ export interface TokenSnapshot {
   symbol: string;
   icon?: string;
   launchpad?: string;
-  source: "jupiter" | "dexscreener" | "rpc" | "demo" | "manual";
+  source: TokenSource;
   twitter?: string;
   website?: string;
   discoveredAt: string;
@@ -98,9 +123,8 @@ export interface TokenSnapshot {
 export interface ExecutionPayload {
   tradeUsd: number;
   expectedSlippagePct: number;
-  jupiterUrl: string;
+  pancakeSwapUrl: string;
   binanceWeb3Url: string;
-  solanaActionUrl: string;
   dexscreenerUrl: string;
   quoteSummary?: string;
 }

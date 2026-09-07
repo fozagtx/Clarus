@@ -28,12 +28,12 @@ export function checkMintAndFreeze(token: TokenSnapshot, started = Date.now()): 
   const ok = token.isMintDisabled && token.isFreezeDisabled;
   return timed(
     "mint_freeze",
-    "Mint & freeze authorities",
+    "Mint & freeze / pause",
     started,
     ok ? "pass" : "fail",
     ok
-      ? "mint_authority and freeze_authority are null. Supply cannot be inflated and wallets cannot be frozen."
-      : "Active mint or freeze authority. Developer can print supply or freeze trader accounts.",
+      ? "BEP-20 is not mintable, owner cannot reclaim mint rights, and the token is not pausable, blacklistable, or a honeypot."
+      : "Mintable supply, hidden owner, pausable transfers, blacklist, or honeypot. Developer can print, freeze, or trap wallets.",
     `mint=${token.isMintDisabled ? "disabled" : "ACTIVE"} freeze=${token.isFreezeDisabled ? "disabled" : "ACTIVE"}`,
   );
 }
@@ -91,7 +91,7 @@ export function checkBundleCluster(token: TokenSnapshot, started = Date.now()): 
 
 export function isLikelyAmmAccount(address: string, ownerHint?: string): boolean {
   const blob = `${address} ${ownerHint ?? ""}`.toLowerCase();
-  if (DEAD_ADDRESSES.has(address)) return true;
+  if (DEAD_ADDRESSES.has(address.toLowerCase())) return true;
   return AMM_OWNER_HINTS.some((hint) => blob.includes(hint));
 }
 

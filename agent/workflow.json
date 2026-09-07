@@ -1,19 +1,30 @@
 {
   "name": "Clarus",
-  "version": "0.1.0",
-  "contest": "Binance Agent OS Mini Hackathon — Track A / workflow agent",
+  "version": "0.2.0",
+  "contest": "Binance Agent OS Mini Hackathon — Track A",
+  "chain": "BNB Smart Chain",
+  "chainId": 56,
   "permissions": {
     "privateKeys": false,
     "seedPhrases": false,
     "autonomousBroadcast": false
   },
+  "mcp": {
+    "transport": "http",
+    "path": "/api/mcp",
+    "binanceAgentMcp": "https://agent.binance.com/mcp/agentic"
+  },
   "ifThenRules": [
     {
-      "if": "new pair or social CA spike",
+      "if": "new BSC pair or social CA spike",
       "then": "lock CA and start firewall within 500ms"
     },
     {
-      "if": "mint_authority OR freeze_authority is set",
+      "if": "token is mintable OR hidden owner OR can reclaim ownership",
+      "then": "REJECT and log"
+    },
+    {
+      "if": "pausable, blacklist, or honeypot",
       "then": "REJECT and log"
     },
     {
@@ -25,7 +36,7 @@
       "then": "REJECT and log"
     },
     {
-      "if": ">3 wallets share a funding origin in 60s",
+      "if": ">3 wallets share a funding origin in 60s OR GoPlus same-creator honeypot",
       "then": "REJECT as bundled"
     },
     {
@@ -38,23 +49,23 @@
     },
     {
       "if": "all checks pass",
-      "then": "emit Jupiter + Binance Web3 deep link. User signs in wallet."
+      "then": "emit PancakeSwap + Binance Web3 deep link. User signs in wallet."
     }
   ],
   "tools": [
     {
       "name": "ingest_recent",
-      "provider": "Jupiter lite-api tokens/v2/recent + Dexscreener",
+      "provider": "GeckoTerminal BSC pools + Dexscreener bsc",
       "sideEffects": "read-only"
     },
     {
       "name": "evaluate_token",
-      "provider": "local firewall + viability engine",
+      "provider": "GoPlus token_security/56 + local firewall",
       "sideEffects": "read-only"
     },
     {
       "name": "build_swap_payload",
-      "provider": "Jupiter quote-api + Binance Web3 router URL",
+      "provider": "PancakeSwap deep link + Binance Web3 router URL",
       "sideEffects": "none — no signing, no broadcast"
     }
   ]

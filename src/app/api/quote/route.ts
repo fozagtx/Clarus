@@ -1,22 +1,18 @@
 import { NextResponse } from "next/server";
-import { SOL_MINT } from "@/lib/engine/types";
-import { fetchJupiterQuote } from "@/lib/providers/jupiter";
+import { isEvmAddress } from "@/lib/engine/social";
+import { quoteBnbToToken } from "@/lib/providers/pancakeswap";
 
 export const dynamic = "force-dynamic";
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
-  const mint = searchParams.get("mint");
-  const lamports = searchParams.get("amount") ?? "50000000";
-  if (!mint) {
-    return NextResponse.json({ error: "mint required" }, { status: 400 });
+  const token = (searchParams.get("token") ?? searchParams.get("mint") ?? "").trim();
+  const amountUsd = Number(searchParams.get("amount") ?? searchParams.get("amountUsd") ?? "50");
+  if (!isEvmAddress(token)) {
+    return NextResponse.json({ error: "token required (BEP-20 0x address)" }, { status: 400 });
   }
   try {
-    const quote = await fetchJupiterQuote({
-      inputMint: SOL_MINT,
-      outputMint: mint,
-      amount: lamports,
-    });
+    const quote = await quoteBnbToToken(token, Number.isFinite(amountUsd) ? amountUsd : 50);
     return NextResponse.json(quote);
   } catch (error) {
     return NextResponse.json(

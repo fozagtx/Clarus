@@ -17,7 +17,7 @@ const plex = IBM_Plex_Mono({
 export const metadata: Metadata = {
   title: "Clarus",
   description:
-    "On-chain clarity agent. Four-layer risk firewall. You remain the execution layer.",
+    "Binance Agent OS Track A agent for BNB Chain. Six-gate risk firewall. You remain the execution layer.",
   applicationName: "Clarus",
   icons: {
     icon: "/clarus-mark.png",

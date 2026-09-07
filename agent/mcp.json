@@ -1,0 +1,12 @@
+{
+  "mcpServers": {
+    "clarus": {
+      "type": "http",
+      "url": "/api/mcp"
+    },
+    "binance-agentic": {
+      "type": "http",
+      "url": "https://agent.binance.com/mcp/agentic"
+    }
+  }
+}

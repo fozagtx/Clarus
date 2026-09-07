@@ -1,17 +1,19 @@
 import { describe, expect, it } from "vitest";
 import { evaluateDiscoveredToken } from "./evaluate";
-import { DEMO_TOKENS } from "./demo";
-import { extractContractAddresses, matchSocialKeywords } from "./social";
+import { extractContractAddresses, isEvmAddress, matchSocialKeywords } from "./social";
 import { estimateConstantProductSlippagePct, fitTradeSizeToSlippage } from "./slippage";
 import { largestNonAmmPercent } from "./firewall";
+import { applyGoPlus, asPercent, inferBundle, lockedLpPercent } from "@/lib/providers/goplus";
 import type { TokenSnapshot } from "./types";
+
+const CAKE = "0x0e09fabb73bd3ade0a17ecc321fd13a19e81ce82";
 
 function token(overrides: Partial<TokenSnapshot> = {}): TokenSnapshot {
   return {
-    contractAddress: "Ca11111111111111111111111111111111111111111",
+    contractAddress: CAKE,
     name: "Fixture",
     symbol: "FIX",
-    source: "demo",
+    source: "manual",
     discoveredAt: new Date().toISOString(),
     marketCap: 100_000,
     volume1h: 90_000,
@@ -32,7 +34,7 @@ describe("evaluateDiscoveredToken", () => {
   it("rejects active mint authority", () => {
     const result = evaluateDiscoveredToken(token({ isMintDisabled: false }));
     expect(result.status).toBe("REJECTED");
-    expect(result.reason).toMatch(/mint or freeze/i);
+    expect(result.reason).toMatch(/mintable|freeze|honeypot/i);
   });
 
   it("rejects unlocked LP below 95%", () => {
@@ -61,26 +63,22 @@ describe("evaluateDiscoveredToken", () => {
     expect(result.checks.find((c) => c.id === "volume_mc")?.status).toBe("fail");
   });
 
-  it("passes a fully clear token and builds a Jupiter deep link", () => {
-    const result = evaluateDiscoveredToken(DEMO_TOKENS[0]);
+  it("passes a fully clear token and builds PancakeSwap + Binance Web3 deep links", () => {
+    const clear = token();
+    const result = evaluateDiscoveredToken(clear);
     expect(result.status).toBe("PASSED");
-    expect(result.execution?.jupiterUrl).toContain(DEMO_TOKENS[0].contractAddress);
+    expect(result.execution?.pancakeSwapUrl).toContain(clear.contractAddress);
+    expect(result.execution?.pancakeSwapUrl).toContain("pancakeswap");
     expect(result.execution?.binanceWeb3Url).toContain("binance.com");
+    expect(result.execution?.binanceWeb3Url).toContain("chain=bsc");
+    expect(result.execution?.dexscreenerUrl).toContain("/bsc/");
     expect(result.checks.every((c) => c.status === "pass")).toBe(true);
   });
 
   it("never asks for a private key in the payload", () => {
-    const result = evaluateDiscoveredToken(DEMO_TOKENS[0]);
+    const result = evaluateDiscoveredToken(token());
     const blob = JSON.stringify(result.execution);
     expect(blob.toLowerCase()).not.toMatch(/private key|seed|mnemonic/);
-  });
-});
-
-describe("demo fixtures", () => {
-  it("covers each rejection class", () => {
-    const statuses = DEMO_TOKENS.map((t) => evaluateDiscoveredToken(t));
-    expect(statuses.filter((s) => s.status === "PASSED")).toHaveLength(1);
-    expect(statuses.filter((s) => s.status === "REJECTED").length).toBeGreaterThanOrEqual(4);
   });
 });
 
@@ -105,11 +103,12 @@ describe("slippage modeler", () => {
 });
 
 describe("social + CA extraction", () => {
-  it("locks a raw Solana CA from mixed text", () => {
+  it("locks a raw BEP-20 CA from mixed text", () => {
     const cas = extractContractAddresses(
-      "breaking cat coin 7xKXtg2CW87d97TXJSDpbD5jBkheTqA83TZRuJosgAsU going parabolic",
+      `breaking bnb cat coin ${CAKE} going parabolic`,
     );
-    expect(cas[0]).toBe("7xKXtg2CW87d97TXJSDpbD5jBkheTqA83TZRuJosgAsU");
+    expect(cas[0]).toBe(CAKE);
+    expect(isEvmAddress(CAKE)).toBe(true);
   });
 
   it("detects high-velocity keywords", () => {
@@ -122,10 +121,43 @@ describe("social + CA extraction", () => {
 describe("holder filter", () => {
   it("ignores AMM-like accounts when computing max individual share", () => {
     const pct = largestNonAmmPercent([
-      { address: "RaydiumVault111", percent: 40, owner: "raydium amm" },
-      { address: "Trader111111111", percent: 2.2 },
-      { address: "Trader222222222", percent: 1.1 },
+      { address: "0xPancakePair111", percent: 40, owner: "pancake v2 pair" },
+      { address: "0xTrader11111111111111111111111111111111", percent: 2.2 },
+      { address: "0xTrader22222222222222222222222222222222", percent: 1.1 },
     ]);
     expect(pct).toBe(2.2);
+  });
+});
+
+describe("GoPlus BSC mapping", () => {
+  it("treats 0-1 holder fractions as percents", () => {
+    expect(asPercent("0.035")).toBeCloseTo(3.5);
+    expect(asPercent(12)).toBe(12);
+  });
+
+  it("sums locked/burned LP holders", () => {
+    const pct = lockedLpPercent([
+      { address: "0x000000000000000000000000000000000000dead", percent: "0.97", is_locked: 1 },
+      { address: "0x1111111111111111111111111111111111111111", percent: "0.03", is_locked: 0 },
+    ]);
+    expect(pct).toBeGreaterThanOrEqual(95);
+  });
+
+  it("flags same-creator honeypot as bundled", () => {
+    expect(inferBundle({ honeypot_with_same_creator: "1" }).bundled).toBe(true);
+  });
+
+  it("maps mintable + honeypot flags onto the snapshot", () => {
+    const snap = applyGoPlus(
+      {
+        is_mintable: "1",
+        is_honeypot: "1",
+        holders: [{ address: "0xabcabcabcabcabcabcabcabcabcabcabcabcabca", percent: "0.02" }],
+        lp_holders: [],
+      },
+      token(),
+    );
+    expect(snap.isMintDisabled).toBe(false);
+    expect(snap.isFreezeDisabled).toBe(false);
   });
 });
