@@ -1,0 +1,61 @@
+{
+  "name": "Clarus MemeCopilot",
+  "version": "0.1.0",
+  "contest": "Binance Agent OS Mini Hackathon — Track A / workflow agent",
+  "permissions": {
+    "privateKeys": false,
+    "seedPhrases": false,
+    "autonomousBroadcast": false
+  },
+  "ifThenRules": [
+    {
+      "if": "new pair or social CA spike",
+      "then": "lock CA and start firewall within 500ms"
+    },
+    {
+      "if": "mint_authority OR freeze_authority is set",
+      "then": "REJECT and log"
+    },
+    {
+      "if": "LP locked/burned < 95%",
+      "then": "REJECT and log"
+    },
+    {
+      "if": "largest non-AMM holder > 3.5%",
+      "then": "REJECT and log"
+    },
+    {
+      "if": ">3 wallets share a funding origin in 60s",
+      "then": "REJECT as bundled"
+    },
+    {
+      "if": "volume < 0.80 * market cap",
+      "then": "REJECT as distorted tape"
+    },
+    {
+      "if": "$50 clip slippage > 2%",
+      "then": "shrink suggested size until ≤2%"
+    },
+    {
+      "if": "all checks pass",
+      "then": "emit Jupiter + Binance Web3 deep link. User signs in wallet."
+    }
+  ],
+  "tools": [
+    {
+      "name": "ingest_recent",
+      "provider": "Jupiter lite-api tokens/v2/recent + Dexscreener",
+      "sideEffects": "read-only"
+    },
+    {
+      "name": "evaluate_token",
+      "provider": "local firewall + viability engine",
+      "sideEffects": "read-only"
+    },
+    {
+      "name": "build_swap_payload",
+      "provider": "Jupiter quote-api + Binance Web3 router URL",
+      "sideEffects": "none — no signing, no broadcast"
+    }
+  ]
+}
