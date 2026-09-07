@@ -1,10 +1,10 @@
 <p align="center">
-  <img src="public/clarus-lockup.png" alt="Clarus — on-chain clarity" width="520" />
+  <img src="public/clarus-mark.png" alt="Clarus" width="180" />
 </p>
 
 # Clarus
 
-On-chain clarity agent for the Binance Agent / Workflow contest.
+Event-driven researcher and on-chain risk firewall for the Binance Agent / Workflow contest.
 
 Clarus does **not** trade. It watches high-velocity Solana launches, runs a strict six-gate pipeline, and — only if every gate passes — emits a Jupiter / Binance Web3 deep link. The operator signs in their own wallet (FaceID, passcode, hardware). No private keys, seed phrases, or broadcast authority ever enter this process.
 
@@ -54,8 +54,7 @@ Optional env (see `.env.example`):
 
 | Asset | Path |
 | --- | --- |
-| Mark | `public/clarus-mark.png` |
-| Lockup | `public/clarus-lockup.png` |
+| Logo (mark only) | `public/clarus-mark.png` |
 | App icon | `src/app/icon.png` |
 
 ## Stack
