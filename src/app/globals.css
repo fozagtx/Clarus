@@ -1,0 +1,98 @@
+@import "tailwindcss";
+
+:root {
+  --ink: #07090d;
+  --panel: #10151d;
+  --line: rgba(126, 255, 179, 0.16);
+  --phosphor: #7dffb3;
+  --amber: #ffb45a;
+  --danger: #ff5d73;
+  --ice: #8ad4ff;
+  --mute: #8a93a3;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  min-height: 100%;
+  background: var(--ink);
+  color: #e8edf5;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-mono), ui-monospace, SFMono-Regular, Menlo, monospace;
+  background-image:
+    radial-gradient(1200px 500px at 80% -10%, rgba(125, 255, 179, 0.08), transparent 55%),
+    radial-gradient(900px 420px at -10% 110%, rgba(138, 212, 255, 0.08), transparent 50%),
+    linear-gradient(180deg, #07090d 0%, #0b1018 100%);
+}
+
+button,
+input {
+  font-family: inherit;
+}
+
+.hud-grid {
+  background-image:
+    linear-gradient(rgba(125, 255, 179, 0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(125, 255, 179, 0.04) 1px, transparent 1px);
+  background-size: 28px 28px;
+}
+
+.radar-sweep {
+  background: conic-gradient(from 0deg, transparent 0 78%, rgba(125, 255, 179, 0.18) 86%, transparent 100%);
+  animation: sweep 6s linear infinite;
+}
+
+@keyframes sweep {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.pulse-dot {
+  animation: pulse 1.6s ease-out infinite;
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(2.4);
+    opacity: 0;
+  }
+}
+
+.ticker {
+  animation: ticker 28s linear infinite;
+}
+
+@keyframes ticker {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+.panel {
+  background: linear-gradient(180deg, rgba(16, 21, 29, 0.92), rgba(12, 16, 23, 0.88));
+  border: 1px solid var(--line);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.03);
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(125, 255, 179, 0.2);
+}
