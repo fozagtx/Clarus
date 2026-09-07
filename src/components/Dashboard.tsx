@@ -1,7 +1,11 @@
 "use client";
 
+import Image from "next/image";
+import Link from "next/link";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { AgentHealth, EvaluationResult, PipelineEvent } from "@/lib/engine/types";
+import { cn } from "@/lib/cn";
+import { Eyebrow, MockupShell, Pill, StatTile } from "@/components/ui/chrome";
 
 type View = "radar" | "shield" | "payload";
 
@@ -26,6 +30,16 @@ const EMPTY: Board = {
   passed: [],
 };
 
+const SOURCES = [
+  "GeckoTerminal",
+  "Dexscreener",
+  "GoPlus",
+  "PancakeSwap",
+  "Binance Web3",
+  "Agent OS",
+  "BNB Chain",
+];
+
 function fmtUsd(n: number) {
   if (!Number.isFinite(n)) return "—";
   if (n >= 1_000_000) return `$${(n / 1_000_000).toFixed(2)}M`;
@@ -34,13 +48,13 @@ function fmtUsd(n: number) {
 }
 
 function shortCa(ca: string) {
-  return `${ca.slice(0, 4)}…${ca.slice(-4)}`;
+  return `${ca.slice(0, 6)}…${ca.slice(-4)}`;
 }
 
-function statusColor(status: string) {
-  if (status === "pass" || status === "PASSED") return "text-[#7dffb3]";
-  if (status === "fail" || status === "REJECTED") return "text-[#ff5d73]";
-  return "text-[#ffb45a]";
+function statusTone(status: string) {
+  if (status === "pass" || status === "PASSED") return "text-pass";
+  if (status === "fail" || status === "REJECTED") return "text-destructive";
+  return "text-warn";
 }
 
 export function Dashboard() {
@@ -120,164 +134,230 @@ export function Dashboard() {
   }, [board.health.passed, board.health.rejected]);
 
   return (
-    <main className="hud-grid min-h-screen px-4 py-5 md:px-8">
-      <header className="mx-auto flex max-w-7xl flex-col gap-4 border-b border-[var(--line)] pb-4 md:flex-row md:items-end md:justify-between">
-        <div className="flex items-center gap-4">
-          <img
-            src="/clarus-mark.png"
-            alt="Clarus"
-            width={72}
-            height={72}
-            className="h-[72px] w-[72px] rounded-2xl border border-[var(--line)] bg-black object-cover"
-          />
-          <div>
-            <h1 className="font-[var(--font-display)] text-4xl font-extrabold tracking-[0.18em] md:text-5xl">
-              CLARUS
-            </h1>
-            <p className="mt-2 max-w-xl text-sm text-[#8a93a3]">
-              Binance Agent OS · BNB Chain firewall. Unsigned wallet payload.
-              Private keys never enter this process.
-            </p>
+    <div className="min-h-screen bg-background text-foreground">
+      <header className="fixed inset-x-0 top-0 z-50 h-14 border-b border-border bg-background/80 backdrop-blur-xl">
+        <div className="px-4 sm:px-8 lg:px-[30px]">
+          <div className="mx-auto flex h-14 max-w-7xl items-center justify-between">
+            <Link href="/" className="flex items-center gap-2">
+              <Image
+                src="/clarus-mark.png"
+                alt=""
+                width={28}
+                height={28}
+                className="size-7 rounded-md object-cover"
+                priority
+              />
+              <span className="text-base font-medium tracking-[-0.5px]">Clarus</span>
+            </Link>
+            <div className="hidden items-center gap-4 lg:flex">
+              <nav className="flex items-center gap-1">
+                {(["radar", "shield", "payload"] as View[]).map((id) => (
+                  <button
+                    key={id}
+                    onClick={() => setView(id)}
+                    className={cn(
+                      "h-8 rounded-2xl border px-3 text-sm capitalize transition-colors",
+                      view === id
+                        ? "border-foreground bg-foreground text-background"
+                        : "border-transparent bg-transparent text-muted-foreground hover:border-border hover:bg-muted/60",
+                    )}
+                  >
+                    {id}
+                  </button>
+                ))}
+              </nav>
+              <Pill
+                className={cn(
+                  live
+                    ? "bg-foreground text-background"
+                    : "border border-border bg-background text-muted-foreground",
+                )}
+                onClick={() => setLive((v) => !v)}
+              >
+                {live ? "Rotation on" : "Resume"}
+              </Pill>
+            </div>
+            <div className="flex items-center gap-2 lg:hidden">
+              <Pill
+                className="bg-foreground text-background"
+                onClick={() => setLive((v) => !v)}
+              >
+                {live ? "Live" : "Paused"}
+              </Pill>
+            </div>
           </div>
-        </div>
-        <div className="flex flex-wrap gap-2 text-[11px]">
-          <Stat label="INGEST" value={String(board.health.ingestions)} />
-          <Stat label="PASS" value={String(board.health.passed)} accent="#7dffb3" />
-          <Stat label="REJECT" value={String(board.health.rejected)} accent="#ff5d73" />
-          <Stat label="AVG PIPE" value={`${board.health.avgPipelineMs}ms`} />
-          <Stat label="FILTER" value={`${rejectRate}%`} />
         </div>
       </header>
 
-      <div className="mx-auto mt-4 flex max-w-7xl flex-col gap-3 md:flex-row md:items-center md:justify-between">
-        <nav className="flex gap-1 rounded-full border border-[var(--line)] p-1">
-          {(["radar", "shield", "payload"] as View[]).map((id) => (
-            <button
-              key={id}
-              onClick={() => setView(id)}
-              className={`rounded-full px-4 py-2 text-xs tracking-[0.2em] uppercase ${
-                view === id ? "bg-[#7dffb3] text-[#07140c]" : "text-[#8a93a3]"
-              }`}
+      <main className="flex flex-col bg-background pt-14">
+        <section className="relative overflow-hidden px-4 pb-8 pt-16 sm:px-8 sm:pt-20 lg:px-[30px]">
+          <div className="relative mx-auto w-full max-w-[1600px]">
+            <div className="mx-auto max-w-4xl text-center">
+              <h1 className="text-balance text-4xl font-normal leading-[0.98] tracking-[-0.5px] sm:text-5xl md:text-6xl lg:text-[4.75rem]">
+                Stop babysitting rugs. Start signing real work.
+              </h1>
+              <p className="mx-auto mt-6 max-w-4xl text-pretty text-base leading-8 text-muted-foreground sm:mt-7 sm:text-xl">
+                Binance Agent OS on BNB Chain. Clarus watches launches, runs a six-gate firewall, and only then
+                emits an unsigned PancakeSwap / Binance Web3 payload. Private keys never enter this process.
+              </p>
+            </div>
+
+            <form
+              className="mx-auto mt-8 flex max-w-3xl flex-col gap-2 sm:flex-row"
+              onSubmit={(e) => {
+                e.preventDefault();
+                void run("/api/evaluate", {
+                  headers: { "content-type": "application/json" },
+                  body: JSON.stringify({ address: mint, mint }),
+                });
+              }}
             >
-              {id}
-            </button>
-          ))}
-        </nav>
-        <div className="flex flex-wrap gap-2">
-          <button
-            className={`border px-3 py-2 text-xs ${live ? "border-[#7dffb3] text-[#7dffb3]" : "border-[var(--line)] text-[#8a93a3]"}`}
-            onClick={() => setLive((v) => !v)}
-          >
-            {live ? "ROTATION ON" : "RESUME ROTATION"}
-          </button>
-          <button
-            className="border border-[var(--line)] px-3 py-2 text-xs text-[#8a93a3]"
-            onClick={() => void run("/api/tick")}
-            disabled={!!busy}
-          >
-            ROTATE ONCE
-          </button>
-          <button
-            className="border border-[var(--line)] px-3 py-2 text-xs text-[#ffb45a]"
-            onClick={() => void run("/api/reset")}
-          >
-            CLEAR LOG
-          </button>
-        </div>
-      </div>
+              <input
+                value={mint}
+                onChange={(e) => setMint(e.target.value)}
+                placeholder="Paste a BNB Chain CA (0x…) — firewall evaluates in-process, never asks for a key"
+                className="h-12 flex-1 rounded-3xl border border-border bg-card/70 px-4 font-mono text-sm tracking-[0.3px] text-foreground outline-none ring-ring placeholder:text-muted-foreground focus:ring-1"
+              />
+              <button className="h-12 rounded-2xl bg-foreground px-6 text-sm font-semibold tracking-[-0.5px] text-background hover:opacity-90">
+                Scan
+              </button>
+            </form>
+            {error ? <p className="mx-auto mt-3 max-w-3xl text-center text-sm text-destructive">{error}</p> : null}
 
-      <form
-        className="mx-auto mt-4 flex max-w-7xl gap-2"
-        onSubmit={(e) => {
-          e.preventDefault();
-          void run("/api/evaluate", {
-            headers: { "content-type": "application/json" },
-            body: JSON.stringify({ address: mint, mint }),
-          });
-        }}
-      >
-        <input
-          value={mint}
-          onChange={(e) => setMint(e.target.value)}
-          placeholder="Paste a BNB Chain CA (0x…) — firewall evaluates in-process, never asks for a key"
-          className="flex-1 border border-[var(--line)] bg-transparent px-3 py-3 text-sm outline-none"
-        />
-        <button className="bg-[#7dffb3] px-4 py-3 text-xs font-semibold tracking-[0.2em] text-[#07140c]">
-          SCAN
-        </button>
-      </form>
-      {error ? <p className="mx-auto mt-2 max-w-7xl text-sm text-[#ff5d73]">{error}</p> : null}
+            <div className="mx-auto mt-8 grid max-w-7xl grid-cols-2 gap-px bg-border sm:grid-cols-5">
+              <StatTile label="Ingest" value={String(board.health.ingestions)} />
+              <StatTile label="Pass" value={String(board.health.passed)} tone="pass" />
+              <StatTile label="Reject" value={String(board.health.rejected)} tone="fail" />
+              <StatTile label="Avg pipe" value={`${board.health.avgPipelineMs}ms`} />
+              <StatTile label="Filter" value={`${rejectRate}%`} tone="brand" />
+            </div>
+          </div>
+        </section>
 
-      <section className="mx-auto mt-5 grid max-w-7xl gap-4 lg:grid-cols-[1.4fr_1fr]">
-        <div className="panel min-h-[640px] p-5">
-          {view === "radar" ? <RadarView events={board.events} results={board.results} /> : null}
-          {view === "shield" ? (
-            <ShieldView result={latestInspect} onSelect={setSelected} results={board.results} />
-          ) : null}
-          {view === "payload" ? <PayloadView result={latestPass} /> : null}
-        </div>
-        <aside className="flex flex-col gap-4">
-          <PipelineStrip result={view === "payload" ? latestPass : latestInspect} />
-          <EventLog events={board.events} onPick={(e) => e.result && setSelected(e.result)} />
-        </aside>
-      </section>
-    </main>
-  );
-}
+        <section className="overflow-hidden bg-background py-16 sm:py-24">
+          <div className="mx-auto max-w-3xl px-4 text-center">
+            <h2 className="mb-12 text-3xl font-semibold tracking-[-0.5px]">Use the rails you already trust.</h2>
+          </div>
+          <div className="agent-marquee group relative mx-auto max-w-2xl">
+            <div className="agent-marquee__track flex w-max">
+              {[0, 1].map((copy) => (
+                <ul key={copy} className="flex shrink-0 items-center gap-8 pr-8">
+                  {SOURCES.map((name) => (
+                    <li
+                      key={`${copy}-${name}`}
+                      className="font-mono text-sm tracking-[0.5px] text-muted-foreground"
+                    >
+                      {name}
+                    </li>
+                  ))}
+                </ul>
+              ))}
+            </div>
+          </div>
+        </section>
 
-function Stat({ label, value, accent }: { label: string; value: string; accent?: string }) {
-  return (
-    <div className="border border-[var(--line)] px-3 py-2">
-      <div className="text-[10px] tracking-[0.25em] text-[#8a93a3]">{label}</div>
-      <div className="text-lg" style={{ color: accent ?? "#e8edf5" }}>
-        {value}
-      </div>
+        <section className="relative px-4 py-16 sm:px-8 sm:py-20 lg:px-[30px] lg:py-24">
+          <div className="mx-auto max-w-7xl">
+            <div className="mb-8 flex flex-wrap items-center justify-between gap-3 lg:hidden">
+              <nav className="flex gap-1 rounded-3xl border border-border p-1">
+                {(["radar", "shield", "payload"] as View[]).map((id) => (
+                  <button
+                    key={id}
+                    onClick={() => setView(id)}
+                    className={cn(
+                      "rounded-2xl px-4 py-2 text-sm capitalize",
+                      view === id ? "bg-foreground text-background" : "text-muted-foreground",
+                    )}
+                  >
+                    {id}
+                  </button>
+                ))}
+              </nav>
+            </div>
+            <div className="mb-6 flex flex-wrap gap-2">
+              <Pill
+                className="border border-border bg-background text-muted-foreground"
+                onClick={() => void run("/api/tick")}
+                disabled={!!busy}
+              >
+                Rotate once
+              </Pill>
+              <Pill
+                className="border border-border bg-transparent text-brand-light"
+                onClick={() => void run("/api/reset")}
+              >
+                Clear log
+              </Pill>
+            </div>
+            <div className="grid items-start gap-8 xl:grid-cols-[1.35fr_0.85fr] xl:gap-16">
+              <div className="relative w-full overflow-hidden sm:min-h-[300px] lg:aspect-4/3">
+                <div className="scenic absolute inset-0" />
+                <div className="absolute inset-0 bg-background/35" />
+                <div className="relative z-10 p-3 sm:p-6 lg:flex lg:h-full lg:items-center">
+                  <MockupShell title="clarus · bnb chain desk" className="w-full max-w-[620px] mx-auto">
+                    {view === "radar" ? <RadarView events={board.events} results={board.results} /> : null}
+                    {view === "shield" ? (
+                      <ShieldView result={latestInspect} onSelect={setSelected} results={board.results} />
+                    ) : null}
+                    {view === "payload" ? <PayloadView result={latestPass} /> : null}
+                  </MockupShell>
+                </div>
+              </div>
+              <aside className="space-y-6">
+                <PipelineStrip result={view === "payload" ? latestPass : latestInspect} />
+                <EventLog events={board.events} onPick={(e) => e.result && setSelected(e.result)} />
+              </aside>
+            </div>
+          </div>
+        </section>
+      </main>
     </div>
   );
 }
 
 function RadarView({ events, results }: { events: PipelineEvent[]; results: EvaluationResult[] }) {
-  const ingest = events.filter((e) => e.kind === "ingest").slice(0, 10);
+  const ingest = events.filter((e) => e.kind === "ingest").slice(0, 8);
   return (
     <div>
       <div className="flex items-start justify-between gap-4">
-        <div>
-          <p className="text-[11px] tracking-[0.3em] text-[#8ad4ff]">PHASE 1 · INGESTION ENGINE</p>
-          <h2 className="mt-1 font-[var(--font-display)] text-3xl">Attention radar</h2>
+        <div className="space-y-3">
+          <Eyebrow>Delegation</Eyebrow>
+          <h2 className="text-balance text-2xl font-medium tracking-[-0.5px] sm:text-3xl lg:text-4xl">
+            Attention radar
+          </h2>
+          <p className="max-w-[500px] text-pretty text-base leading-relaxed text-muted-foreground sm:text-lg">
+            Live rotation across GeckoTerminal BSC pools and Dexscreener profiles. GoPlus scores mint, honeypot, LP lock,
+            and holders before anything reaches a wallet.
+          </p>
         </div>
-        <div className="relative h-36 w-36 overflow-hidden rounded-full border border-[var(--line)]">
+        <div className="relative hidden h-24 w-24 overflow-hidden rounded-full border border-border sm:block">
           <div className="radar-sweep absolute inset-0 rounded-full" />
-          <div className="absolute left-1/2 top-1/2 h-2 w-2 -translate-x-1/2 -translate-y-1/2 rounded-full bg-[#7dffb3]" />
-          <span className="pulse-dot absolute left-1/2 top-1/2 h-2 w-2 -translate-x-1/2 -translate-y-1/2 rounded-full bg-[#7dffb3]" />
+          <div className="absolute left-1/2 top-1/2 size-2 -translate-x-1/2 -translate-y-1/2 rounded-full bg-brand" />
+          <span className="pulse-dot absolute left-1/2 top-1/2 size-2 -translate-x-1/2 -translate-y-1/2 rounded-full bg-brand" />
         </div>
       </div>
-      <p className="mt-3 text-sm text-[#8a93a3]">
-        Live rotation across GeckoTerminal BSC new/trending pools and Dexscreener BNB Chain profiles.
-        Each CA is enriched from Dexscreener tape and GoPlus token security (mint, honeypot, LP lock, holders).
-      </p>
-      <div className="mt-5 overflow-hidden border border-[var(--line)]">
-        <div className="ticker flex min-w-max gap-8 py-2 text-[11px] tracking-[0.2em] text-[#7dffb3]">
-          {[...results, ...results].slice(0, 24).map((r, i) => (
+      <div className="agent-marquee mt-5 overflow-hidden border-y border-border">
+        <div className="agent-marquee__track flex w-max gap-8 py-2 font-mono text-[11px] tracking-[0.5px] text-brand-light">
+          {(results.length ? [...results, ...results] : [{ token: { symbol: "WAIT", contractAddress: "0x" }, status: "IDLE" }]).slice(0, 24).map((r, i) => (
             <span key={`${r.token.contractAddress}-${i}`}>
               {r.token.symbol} {r.status} {shortCa(r.token.contractAddress)}
             </span>
           ))}
-          {results.length === 0 ? <span>AWAITING LIVE ROTATION · GECKOTERMINAL / DEXSCREENER / GOPLUS</span> : null}
         </div>
       </div>
-      <ul className="mt-5 space-y-2">
+      <ul className="mt-4 space-y-2">
         {ingest.length === 0 ? (
-          <li className="border border-dashed border-[var(--line)] p-4 text-sm text-[#8a93a3]">
+          <li className="border border-dashed border-border p-4 text-sm text-muted-foreground">
             No ingestions yet. Rotation pulls real launches automatically. You can also paste a CA.
           </li>
         ) : (
           ingest.map((e) => (
-            <li key={e.id} className="flex items-center justify-between border border-[var(--line)] px-3 py-3">
+            <li key={e.id} className="glass-quiet flex items-center justify-between px-3 py-3">
               <div>
                 <div className="text-sm">{e.name}</div>
-                <div className="text-[11px] text-[#8a93a3]">{e.detail}</div>
+                <div className="font-mono text-[11px] text-muted-foreground">{e.detail}</div>
               </div>
-              <code className="text-[11px] text-[#8ad4ff]">{shortCa(e.ca)}</code>
+              <code className="font-mono text-[11px] text-brand-light">{shortCa(e.ca)}</code>
             </li>
           ))
         )}
@@ -297,50 +377,52 @@ function ShieldView({
 }) {
   return (
     <div>
-      <p className="text-[11px] tracking-[0.3em] text-[#ffb45a]">PHASE 2–3 · DEFENSIVE FIREWALL</p>
-      <h2 className="mt-1 font-[var(--font-display)] text-3xl">Four-layer shield</h2>
-      <p className="mt-2 text-sm text-[#8a93a3]">
-        Mint/freeze, LP burn, holder cap ≤3.5%, bundle cluster, then volume/MC ≥ 80% and 2% slippage sizing.
-        Any fail terminates the task.
+      <Eyebrow>Visibility</Eyebrow>
+      <h2 className="mt-3 text-balance text-2xl font-medium tracking-[-0.5px] sm:text-3xl lg:text-4xl">
+        Four-layer shield
+      </h2>
+      <p className="mt-3 max-w-[500px] text-pretty text-base leading-relaxed text-muted-foreground sm:text-lg">
+        Mint/freeze, LP burn, holder cap ≤3.5%, bundle cluster, then volume/MC ≥ 80% and 2% slippage sizing. Any fail
+        terminates the task.
       </p>
       {result ? (
         <div className="mt-5">
-          <div className="flex items-baseline justify-between">
+          <div className="flex items-baseline justify-between gap-3">
             <div>
-              <div className="text-lg">{result.token.name}</div>
-              <code className="text-[11px] text-[#8ad4ff]">{result.token.contractAddress}</code>
+              <div className="text-lg font-medium">{result.token.name}</div>
+              <code className="break-all font-mono text-[11px] text-muted-foreground">{result.token.contractAddress}</code>
             </div>
-            <div className={`text-sm tracking-[0.2em] ${statusColor(result.status)}`}>{result.status}</div>
+            <div className={cn("font-mono text-sm tracking-[0.4px]", statusTone(result.status))}>{result.status}</div>
           </div>
-          <ol className="mt-4 grid gap-2 md:grid-cols-2">
+          <ol className="mt-4 grid gap-px bg-border md:grid-cols-2">
             {result.checks.map((check, idx) => (
-              <li key={check.id} className="border border-[var(--line)] p-3">
-                <div className="flex items-center justify-between text-[11px] tracking-[0.2em] uppercase">
+              <li key={check.id} className="bg-card p-3">
+                <div className="flex items-center justify-between font-mono text-[11px] uppercase tracking-[0.4px]">
                   <span>
                     {idx + 1}. {check.label}
                   </span>
-                  <span className={statusColor(check.status)}>{check.status}</span>
+                  <span className={statusTone(check.status)}>{check.status}</span>
                 </div>
-                <p className="mt-2 text-sm text-[#c9d0dc]">{check.detail}</p>
-                {check.value ? <p className="mt-1 text-[11px] text-[#8a93a3]">{check.value}</p> : null}
+                <p className="mt-2 text-sm text-foreground/90">{check.detail}</p>
+                {check.value ? <p className="mt-1 font-mono text-[11px] text-muted-foreground">{check.value}</p> : null}
               </li>
             ))}
           </ol>
         </div>
       ) : (
-        <p className="mt-8 text-sm text-[#8a93a3]">Inspect a token from the live radar.</p>
+        <p className="mt-8 text-sm text-muted-foreground">Inspect a token from the live radar.</p>
       )}
       <div className="mt-6 grid gap-2">
-        {results.slice(0, 8).map((r) => (
+        {results.slice(0, 6).map((r) => (
           <button
             key={r.token.contractAddress + r.elapsedMs}
             onClick={() => onSelect(r)}
-            className="flex items-center justify-between border border-[var(--line)] px-3 py-2 text-left text-sm"
+            className="flex items-center justify-between border border-border bg-background/40 px-3 py-2 text-left text-sm transition-colors hover:bg-muted/60"
           >
             <span>
               {r.token.symbol} · {r.token.name}
             </span>
-            <span className={statusColor(r.status)}>{r.status}</span>
+            <span className={cn("font-mono text-xs", statusTone(r.status))}>{r.status}</span>
           </button>
         ))}
       </div>
@@ -352,9 +434,11 @@ function PayloadView({ result }: { result: EvaluationResult | null }) {
   if (!result || result.status !== "PASSED" || !result.execution) {
     return (
       <div>
-        <p className="text-[11px] tracking-[0.3em] text-[#7dffb3]">PHASE 4 · USER EXECUTION</p>
-        <h2 className="mt-1 font-[var(--font-display)] text-3xl">No clear payload yet</h2>
-        <p className="mt-3 max-w-lg text-sm text-[#8a93a3]">
+        <Eyebrow>Coverage</Eyebrow>
+        <h2 className="mt-3 text-balance text-2xl font-medium tracking-[-0.5px] sm:text-3xl lg:text-4xl">
+          No clear payload yet
+        </h2>
+        <p className="mt-3 max-w-[500px] text-pretty text-base leading-relaxed text-muted-foreground sm:text-lg">
           The agent does not trade. When a token clears every gate, a PancakeSwap / Binance Web3 deep link appears here
           for FaceID or passcode signing in your wallet app.
         </p>
@@ -365,61 +449,61 @@ function PayloadView({ result }: { result: EvaluationResult | null }) {
   const { execution: payload, token } = result;
   return (
     <div>
-      <p className="text-[11px] tracking-[0.3em] text-[#7dffb3]">PHASE 4 · USER EXECUTION GENERATOR</p>
-      <h2 className="mt-1 font-[var(--font-display)] text-3xl">Verified insight</h2>
-      <div className="mt-5 border border-[#7dffb3]/40 bg-[#7dffb3]/5 p-5">
-        <p className="text-xs tracking-[0.3em] text-[#7dffb3]">ALERT · MANUAL SIGNATURE REQUIRED</p>
-        <h3 className="mt-2 font-[var(--font-display)] text-2xl">
-          {token.name} <span className="text-[#8a93a3]">${token.symbol}</span>
+      <Eyebrow>Coverage</Eyebrow>
+      <h2 className="mt-3 text-balance text-2xl font-medium tracking-[-0.5px] sm:text-3xl">Verified insight</h2>
+      <div className="mt-5 border border-brand/40 bg-brand/10 p-5">
+        <p className="font-mono text-xs tracking-[0.4px] text-brand-light">Alert · manual signature required</p>
+        <h3 className="mt-2 text-2xl font-medium tracking-[-0.5px]">
+          {token.name} <span className="text-muted-foreground">${token.symbol}</span>
         </h3>
-        <p className="mt-2 break-all text-xs text-[#8ad4ff]">{token.contractAddress}</p>
+        <p className="mt-2 break-all font-mono text-xs text-muted-foreground">{token.contractAddress}</p>
         <dl className="mt-4 grid grid-cols-2 gap-3 text-sm">
           <div>
-            <dt className="text-[11px] text-[#8a93a3]">Market cap</dt>
+            <dt className="font-mono text-[11px] text-muted-foreground">Market cap</dt>
             <dd>{fmtUsd(token.marketCap)}</dd>
           </div>
           <div>
-            <dt className="text-[11px] text-[#8a93a3]">Volume</dt>
+            <dt className="font-mono text-[11px] text-muted-foreground">Volume</dt>
             <dd>{fmtUsd(Math.max(token.volume1h, token.volume24h))}</dd>
           </div>
           <div>
-            <dt className="text-[11px] text-[#8a93a3]">Suggested size</dt>
+            <dt className="font-mono text-[11px] text-muted-foreground">Suggested size</dt>
             <dd>${payload.tradeUsd.toFixed(2)}</dd>
           </div>
           <div>
-            <dt className="text-[11px] text-[#8a93a3]">Modeled slip</dt>
+            <dt className="font-mono text-[11px] text-muted-foreground">Modeled slip</dt>
             <dd>{payload.expectedSlippagePct.toFixed(2)}%</dd>
           </div>
         </dl>
-        <p className="mt-4 text-sm text-[#c9d0dc]">{payload.quoteSummary}</p>
+        <p className="mt-4 text-sm text-foreground/90">{payload.quoteSummary}</p>
         <div className="mt-5 flex flex-wrap gap-2">
           <a
-            className="bg-[#7dffb3] px-4 py-3 text-xs font-semibold tracking-[0.16em] text-[#07140c]"
+            className="rounded-2xl bg-foreground px-4 py-3 text-xs font-semibold tracking-[-0.5px] text-background hover:opacity-90"
             href={payload.pancakeSwapUrl}
             target="_blank"
             rel="noreferrer"
           >
-            OPEN PANCAKESWAP WALLET FLOW
+            Open PancakeSwap
           </a>
           <a
-            className="border border-[var(--line)] px-4 py-3 text-xs tracking-[0.16em] text-[#8ad4ff]"
+            className="rounded-3xl border border-border bg-background px-4 py-3 text-xs tracking-[-0.5px] text-foreground hover:bg-muted/60"
             href={payload.binanceWeb3Url}
             target="_blank"
             rel="noreferrer"
           >
-            BINANCE WEB3 ROUTER
+            Binance Web3
           </a>
           <a
-            className="border border-[var(--line)] px-4 py-3 text-xs tracking-[0.16em] text-[#8a93a3]"
+            className="rounded-3xl border border-border px-4 py-3 text-xs tracking-[-0.5px] text-muted-foreground hover:bg-muted/60"
             href={payload.dexscreenerUrl}
             target="_blank"
             rel="noreferrer"
           >
-            DEXSCREENER
+            Dexscreener
           </a>
         </div>
-        <p className="mt-4 text-[11px] text-[#8a93a3]">
-          Deep link only. Signing stays in Binance Web3 or your BNB Chain wallet. Clarus cannot see or store keys.
+        <p className="mt-4 font-mono text-[11px] text-muted-foreground">
+          Deep link only. Signing stays in Binance Web3 or your BNB Chain wallet.
         </p>
       </div>
     </div>
@@ -439,23 +523,45 @@ function PipelineStrip({ result }: { result: EvaluationResult | null }) {
   ];
   const failedAt = result?.checks.findIndex((c) => c.status === "fail") ?? -1;
   return (
-    <div className="panel p-4">
-      <p className="text-[11px] tracking-[0.3em] text-[#8a93a3]">IF / THEN LOOP</p>
-      <ol className="mt-3 space-y-2 text-xs">
+    <div className="glass p-5">
+      <Eyebrow>Feedback loop</Eyebrow>
+      <ol className="mt-4 space-y-3">
         {stages.map((stage, i) => {
-          let tone = "text-[#8a93a3]";
+          let tone = "text-muted-foreground";
+          let mark = "Idle";
           if (result) {
-            if (result.status === "PASSED") tone = "text-[#7dffb3]";
-            else if (failedAt >= 0 && i > failedAt + 1) tone = "text-[#3d4450]";
-            else if (failedAt >= 0 && i === failedAt + 1) tone = "text-[#ff5d73]";
-            else tone = "text-[#7dffb3]";
+            if (result.status === "PASSED") {
+              tone = "text-pass";
+              mark = "Ok";
+            } else if (failedAt >= 0 && i > failedAt + 1) {
+              tone = "text-muted-foreground/40";
+              mark = "—";
+            } else if (failedAt >= 0 && i === failedAt + 1) {
+              tone = "text-destructive";
+              mark = "Halt";
+            } else {
+              tone = "text-pass";
+              mark = "Ok";
+            }
           }
           return (
-            <li key={stage} className={`flex justify-between ${tone}`}>
-              <span>
-                {i + 1}. {stage}
+            <li key={stage} className={cn("flex items-center justify-between text-sm", tone)}>
+              <span className="flex items-center gap-3">
+                <span
+                  className={cn(
+                    "grid size-6 place-items-center rounded-full border text-[10px] font-mono",
+                    mark === "Halt"
+                      ? "border-destructive"
+                      : mark === "Ok"
+                        ? "border-pass"
+                        : "border-border",
+                  )}
+                >
+                  {i + 1}
+                </span>
+                {stage}
               </span>
-              <span>{result ? (tone.includes("ff5d73") ? "HALT" : tone.includes("3d4450") ? "—" : "OK") : "IDLE"}</span>
+              <span className="font-mono text-[11px] uppercase tracking-[0.4px]">{mark}</span>
             </li>
           );
         })}
@@ -472,18 +578,23 @@ function EventLog({
   onPick: (event: PipelineEvent) => void;
 }) {
   return (
-    <div className="panel flex-1 p-4">
-      <p className="text-[11px] tracking-[0.3em] text-[#8a93a3]">TERMINAL</p>
-      <ul className="mt-3 max-h-[420px] space-y-2 overflow-auto text-[12px]">
+    <div className="glass flex-1 p-5">
+      <Eyebrow>In the wild</Eyebrow>
+      <ul className="mt-4 max-h-[420px] space-y-px overflow-auto bg-border">
         {events.length === 0 ? (
-          <li className="text-[#8a93a3]">waiting for workflow events…</li>
+          <li className="bg-card p-4 text-sm text-muted-foreground">waiting for workflow events…</li>
         ) : (
-          events.map((event) => (
-            <li key={event.id}>
-              <button onClick={() => onPick(event)} className="w-full text-left">
-                <span className="text-[#8ad4ff]">{event.kind.toUpperCase()}</span>{" "}
-                <span className="text-[#e8edf5]">{event.name}</span>
-                <div className="text-[#8a93a3]">{event.detail}</div>
+          events.slice(0, 40).map((event) => (
+            <li key={event.id} className="bg-card">
+              <button
+                onClick={() => onPick(event)}
+                className="w-full p-3 text-left transition-colors hover:bg-muted/60"
+              >
+                <span className="font-mono text-[11px] uppercase tracking-[0.4px] text-brand-light">
+                  {event.kind}
+                </span>{" "}
+                <span className="text-sm">{event.name}</span>
+                <div className="text-sm text-muted-foreground">{event.detail}</div>
               </button>
             </li>
           ))
