@@ -15,9 +15,14 @@ const plex = IBM_Plex_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Clarus · MemeCopilot",
+  title: "Clarus",
   description:
-    "Event-driven researcher and on-chain risk firewall. You remain the execution layer.",
+    "On-chain clarity agent. Four-layer risk firewall. You remain the execution layer.",
+  applicationName: "Clarus",
+  icons: {
+    icon: "/clarus-mark.png",
+    apple: "/clarus-mark.png",
+  },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

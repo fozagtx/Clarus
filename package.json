@@ -1,8 +1,8 @@
 {
-  "name": "clarus-memecopilot",
+  "name": "clarus",
   "version": "0.1.0",
   "private": true,
-  "description": "Event-driven AI workflow agent that researches meme-token signals, runs a four-layer on-chain safety firewall, and emits one-click wallet execution links. Never holds private keys.",
+  "description": "Clarus: event-driven on-chain clarity agent. Researches launch signals, runs a four-layer safety firewall, and emits one-click wallet execution links. Never holds private keys.",
   "scripts": {
     "dev": "next dev -p 3000",
     "build": "next build",

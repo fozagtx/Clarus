@@ -1,8 +1,12 @@
-# Clarus · MemeCopilot AI
+<p align="center">
+  <img src="public/clarus-lockup.png" alt="Clarus — on-chain clarity" width="520" />
+</p>
 
-Event-driven researcher and on-chain risk firewall for the Binance Agent / Workflow contest.
+# Clarus
 
-MemeCopilot does **not** trade. It watches high-velocity Solana launches, runs a strict six-gate pipeline, and — only if every gate passes — emits a Jupiter / Binance Web3 deep link. The operator signs in their own wallet (FaceID, passcode, hardware). No private keys, seed phrases, or broadcast authority ever enter this process.
+On-chain clarity agent for the Binance Agent / Workflow contest.
+
+Clarus does **not** trade. It watches high-velocity Solana launches, runs a strict six-gate pipeline, and — only if every gate passes — emits a Jupiter / Binance Web3 deep link. The operator signs in their own wallet (FaceID, passcode, hardware). No private keys, seed phrases, or broadcast authority ever enter this process.
 
 ## What it does
 
@@ -17,7 +21,7 @@ MemeCopilot does **not** trade. It watches high-velocity Solana launches, runs a
 
 Any failed check terminates the task and is logged. That rejection stream **is** the product: most launches should die here.
 
-## Dashboard (three shots)
+## Dashboard
 
 The HUD has three operator views:
 
@@ -37,14 +41,22 @@ npm run dev
 
 Open [http://localhost:3000](http://localhost:3000).
 
-- **Run 6-token demo** — fixtures that pass, fail mint, fail LP, fail holder cap, fail bundles, and fail volume/MC. Use this for contest walkthroughs.
-- **Arm live Jupiter feed** — polls public Jupiter recent tokens and evaluates each new CA. Public RPC is rate-limited; Helius is optional.
+- **Run 6-token demo** — fixtures that pass, fail mint, fail LP, fail holder cap, fail bundles, and fail volume/MC.
+- **Arm live Jupiter feed** — polls public Jupiter recent tokens and evaluates each new CA.
 - **Paste a CA** — one-shot evaluate through the same engine.
 
 Optional env (see `.env.example`):
 
 - `HELIUS_API_KEY` / `SOLANA_RPC_URL` — faster mint + holder queries
 - `TELEGRAM_BOT_TOKEN` + `TELEGRAM_CHAT_ID` — push the same alert the dashboard shows
+
+## Brand
+
+| Asset | Path |
+| --- | --- |
+| Mark | `public/clarus-mark.png` |
+| Lockup | `public/clarus-lockup.png` |
+| App icon | `src/app/icon.png` |
 
 ## Stack
 

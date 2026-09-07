@@ -109,13 +109,16 @@ export function Dashboard() {
   return (
     <main className="hud-grid min-h-screen px-4 py-5 md:px-8">
       <header className="mx-auto flex max-w-7xl flex-col gap-4 border-b border-[var(--line)] pb-4 md:flex-row md:items-end md:justify-between">
-        <div>
-          <p className="text-[11px] tracking-[0.35em] text-[#8ad4ff]">CLARUS / BINANCE AGENT WORKFLOW</p>
-          <h1 className="mt-1 font-[var(--font-display)] text-4xl font-extrabold tracking-tight md:text-5xl">
-            MemeCopilot
-          </h1>
-          <p className="mt-2 max-w-xl text-sm text-[#8a93a3]">
-            Real-time researcher. Four-layer on-chain firewall. One-click wallet payload.
+        <div className="flex items-center gap-4">
+          <img
+            src="/clarus-lockup.png"
+            alt="Clarus"
+            width={420}
+            height={112}
+            className="h-24 w-auto max-w-[min(100%,420px)] rounded-2xl border border-[var(--line)] bg-black object-contain"
+          />
+          <p className="max-w-sm text-sm text-[#8a93a3]">
+            On-chain clarity agent. Four-layer firewall. One-click wallet payload.
             Private keys never enter this process.
           </p>
         </div>
