@@ -10,6 +10,8 @@ If all six gates pass, you get a PancakeSwap URL and a Binance Web3 link. You st
 
 Track A skill for the Binance Agent OS Mini Hackathon. Markdown only. No app. No `npm`.
 
+Binance Agent OS: paste [`skill/SKILL.md`](https://raw.githubusercontent.com/fozagtx/Clarus/main/skill/SKILL.md). Do not hunt the tree.
+
 ## Gates
 
 | # | Check | Pass |
@@ -40,16 +42,16 @@ chmod +x install.sh install-custom.sh
 | Default | `./install.sh -y` | `~/.agents/skills/clarus/` |
 | Pick a path | `./install-custom.sh` | `~/.agents`, `~/.claude/skills`, `./skills`, or a path you type |
 | Manual | `cp -R skill/. ~/.agents/skills/clarus/` | Same files |
-| Binance Agent OS | Paste the block below | Refresh the agent |
+| Binance Agent OS | [`https://raw.githubusercontent.com/fozagtx/Clarus/main/skill/SKILL.md`](https://raw.githubusercontent.com/fozagtx/Clarus/main/skill/SKILL.md) | Refresh the agent |
 
-For Binance Agent OS, copy this and paste it into the agent. You do not need to hunt through the tree.
+That cell is the file. Copy it. Paste this into the agent, then refresh:
 
 ```text
 Load https://raw.githubusercontent.com/fozagtx/Clarus/main/skill/SKILL.md
 Never sign. Never ask for keys.
 ```
 
-That URL is [skill/SKILL.md](https://github.com/fozagtx/Clarus/blob/main/skill/SKILL.md). Refresh the agent after it loads.
+Same file in the repo: [skill/SKILL.md](skill/SKILL.md).
 
 No installer hits the network. `bash tests/validate_structure.sh` should print `Structure validation passed.`
 
@@ -57,7 +59,7 @@ Keep `agents/`, `commands/`, and `rules/` next to `skill/`. `skill/SKILL.md` poi
 
 ## Run
 
-Tell the agent the same paste block as in Install, or: `Load skill/SKILL.md. Never sign. Never ask for keys.`
+Tell the agent the Install paste block, or load [skill/SKILL.md](skill/SKILL.md). Never sign. Never ask for keys.
 
 | You type | What happens |
 |---|---|
