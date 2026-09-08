@@ -40,7 +40,16 @@ chmod +x install.sh install-custom.sh
 | Default | `./install.sh -y` | `~/.agents/skills/clarus/` |
 | Pick a path | `./install-custom.sh` | `~/.agents`, `~/.claude/skills`, `./skills`, or a path you type |
 | Manual | `cp -R skill/. ~/.agents/skills/clarus/` | Same files |
-| Binance Agent OS | Open the repo or paste `skill/SKILL.md` | Refresh the agent |
+| Binance Agent OS | Paste the block below | Refresh the agent |
+
+For Binance Agent OS, copy this and paste it into the agent. You do not need to hunt through the tree.
+
+```text
+Load https://raw.githubusercontent.com/fozagtx/Clarus/main/skill/SKILL.md
+Never sign. Never ask for keys.
+```
+
+That URL is [skill/SKILL.md](https://github.com/fozagtx/Clarus/blob/main/skill/SKILL.md). Refresh the agent after it loads.
 
 No installer hits the network. `bash tests/validate_structure.sh` should print `Structure validation passed.`
 
@@ -48,7 +57,7 @@ Keep `agents/`, `commands/`, and `rules/` next to `skill/`. `skill/SKILL.md` poi
 
 ## Run
 
-Tell the agent: `Load skill/SKILL.md. Never sign. Never ask for keys.`
+Tell the agent the same paste block as in Install, or: `Load skill/SKILL.md. Never sign. Never ask for keys.`
 
 | You type | What happens |
 |---|---|
