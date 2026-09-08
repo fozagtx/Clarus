@@ -1,0 +1,362 @@
+<!doctype html>
+<html lang="en" data-resolution="landscape">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1920, height=1080" />
+    <title>Clarus</title>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <style>
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      html, body {
+        margin: 0;
+        width: 1920px;
+        height: 1080px;
+        overflow: hidden;
+        background: #0c0c0c;
+      }
+      #root {
+        position: relative;
+        width: 1920px;
+        height: 1080px;
+        overflow: hidden;
+        background: #0c0c0c;
+        color: #f4efe4;
+        font-family: Arial, Helvetica, sans-serif;
+      }
+      #fill {
+        position: absolute;
+        inset: 0;
+        background: #0c0c0c;
+      }
+      #paint {
+        position: absolute;
+        inset: 0;
+        display: block;
+        width: 1920px;
+        height: 1080px;
+      }
+      .clip .inner,
+      #in-logo, #in-title, #in-hook, #in-gates, #in-out, #in-end {
+        width: 100%;
+        height: 100%;
+      }
+      .kicker {
+        font-family: "Courier New", Courier, monospace;
+        font-size: 22px;
+        letter-spacing: 0.22em;
+        text-transform: uppercase;
+        color: #f0b90b;
+        margin-bottom: 36px;
+      }
+      h1 {
+        font-size: 110px;
+        font-weight: 600;
+        letter-spacing: -0.04em;
+        line-height: 1.02;
+        max-width: 1400px;
+      }
+      h1.tight { font-size: 72px; max-width: 1600px; }
+      .line {
+        font-size: 52px;
+        font-weight: 500;
+        line-height: 1.15;
+        max-width: 1500px;
+      }
+      .sub {
+        font-family: "Courier New", Courier, monospace;
+        font-size: 24px;
+        color: #9a9588;
+        margin-top: 28px;
+      }
+      .logo-wrap {
+        width: 220px;
+        height: 220px;
+        display: block;
+      }
+      .logo-wrap svg {
+        width: 220px;
+        height: 220px;
+        display: block;
+      }
+      .gates {
+        display: flex;
+        flex-direction: column;
+        gap: 18px;
+        width: 1320px;
+        margin-top: 36px;
+      }
+      .gate {
+        display: flex;
+        align-items: center;
+        gap: 22px;
+        height: 72px;
+      }
+      .tick {
+        width: 18px;
+        height: 18px;
+        background: #f0b90b;
+        display: block;
+        flex: 0 0 18px;
+      }
+      .gnum {
+        font-family: "Courier New", Courier, monospace;
+        font-size: 22px;
+        color: #f0b90b;
+        width: 36px;
+        display: block;
+      }
+      .glabel {
+        font-size: 34px;
+        font-weight: 500;
+      }
+      .gbar {
+        height: 3px;
+        width: 280px;
+        background: #f0b90b;
+        display: block;
+        transform-origin: left center;
+      }
+      .pair {
+        display: flex;
+        gap: 80px;
+        margin-top: 48px;
+      }
+      .card {
+        width: 680px;
+      }
+      .card h2 {
+        font-size: 64px;
+        letter-spacing: -0.03em;
+      }
+      .card p {
+        font-size: 32px;
+        margin-top: 16px;
+        color: #cfc8b8;
+      }
+      .bug {
+        position: absolute;
+        inset: auto;
+        padding: 0;
+        right: 72px;
+        bottom: 56px;
+        width: 48px;
+        height: 48px;
+      }
+      .bug svg, #bug-mark { width: 48px; height: 48px; display: block; }
+    </style>
+  </head>
+  <body>
+    <div
+      id="root"
+      data-composition-id="main"
+      data-start="0"
+      data-duration="60"
+      data-width="1920"
+      data-height="1080"
+    >
+      <div id="fill"></div>
+      <canvas id="paint" width="1920" height="1080"></canvas>
+
+      <section id="s-logo" class="clip" data-start="0" data-duration="6" data-track-index="1">
+        <div id="in-logo">
+        <p id="k-os" class="kicker">Binance Agent OS</p>
+        <div id="logo" class="logo-wrap" style="margin-top: 48px">
+          <svg viewBox="0 0 126.61 126.61" aria-label="Binance">
+            <g fill="none" stroke="#F0B90B" stroke-width="3.2" stroke-linejoin="miter">
+              <path id="bn1" d="M38.73 53.2 63.32 28.61 87.92 53.2 102.22 38.89 63.32 0 24.42 38.89z" />
+              <path id="bn2" d="M0 63.3 14.31 48.99 28.62 63.3 14.31 77.61z" />
+              <path id="bn3" d="M38.73 73.41 63.32 98 87.92 73.41 102.22 87.72 63.32 126.61 24.42 87.72z" />
+              <path id="bn4" d="M97.99 63.3 112.3 48.99 126.61 63.3 112.3 77.61z" />
+              <path id="bn5" d="M52.41 63.3 63.32 52.4 74.22 63.3 63.32 74.21z" />
+            </g>
+          </svg>
+        </div>
+        </div>
+      </section>
+
+      <section id="s-title" class="clip" data-start="6" data-duration="8" data-track-index="2">
+        <div id="in-title">
+        <p id="k-skill" class="kicker">Track A skill</p>
+        <h1 id="title">Clarus</h1>
+        <p id="title-sub" class="sub">Six gates. Live data. No keys.</p>
+        </div>
+      </section>
+
+      <section id="s-hook" class="clip" data-start="14" data-duration="10" data-track-index="3">
+        <div id="in-hook">
+        <p id="k-hook" class="kicker">BNB Chain 56</p>
+        <p id="hook" class="line">A contract address hits the chain. Clarus does not buy it.</p>
+        <p id="hook-sub" class="sub">Mintable tokens. Unlocked LP. One wallet on too much supply. A ticker nobody checked.</p>
+        </div>
+      </section>
+
+      <section id="s-gates" class="clip" data-start="24" data-duration="18" data-track-index="4">
+        <div id="in-gates">
+        <p id="k-gates" class="kicker">Pass bars</p>
+        <div class="gates">
+          <div class="gate" id="g1"><span class="tick"></span><span class="gnum">01</span><span class="glabel">Mint, hidden owner, honeypot, pause, blacklist: all off</span><span class="gbar"></span></div>
+          <div class="gate" id="g2"><span class="tick"></span><span class="gnum">02</span><span class="glabel">LP locked or burned ≥ 95%</span><span class="gbar"></span></div>
+          <div class="gate" id="g3"><span class="tick"></span><span class="gnum">03</span><span class="glabel">Largest non-AMM holder ≤ 3.5%</span><span class="gbar"></span></div>
+          <div class="gate" id="g4"><span class="tick"></span><span class="gnum">04</span><span class="glabel">No same-origin cluster</span><span class="gbar"></span></div>
+          <div class="gate" id="g5"><span class="tick"></span><span class="gnum">05</span><span class="glabel">24h volume ≥ 80% of market cap</span><span class="gbar"></span></div>
+          <div class="gate" id="g6"><span class="tick"></span><span class="gnum">06</span><span class="glabel">$50 clip impact ≤ 2% on WBNB</span><span class="gbar"></span></div>
+        </div>
+        </div>
+      </section>
+
+      <section id="s-out" class="clip" data-start="42" data-duration="10" data-track-index="5">
+        <div id="in-out">
+        <p id="k-out" class="kicker">After the report</p>
+        <div class="pair">
+          <div class="card" id="c-rej">
+            <h2>REJECT</h2>
+            <p>A failed gate means no URL. That is a finished run.</p>
+          </div>
+          <div class="card" id="c-pass">
+            <h2>PASS</h2>
+            <p>Unsigned PancakeSwap and Binance Web3 links. You sign. Clarus does not.</p>
+          </div>
+        </div>
+        </div>
+      </section>
+
+      <section id="s-end" class="clip" data-start="52" data-duration="8" data-track-index="6">
+        <div id="in-end">
+        <p id="k-end" class="kicker">Install</p>
+        <h1 id="end-title" class="tight">Load SKILL.md</h1>
+        <p id="end-sub" class="sub">git clone github.com/fozagtx/Clarus then ./install.sh -y. Never sign.</p>
+        </div>
+      </section>
+
+      <div id="bug" class="clip bug" data-start="6" data-duration="54">
+        <div id="bug-mark">
+        <svg viewBox="0 0 126.61 126.61">
+          <g fill="#F0B90B">
+            <path d="M38.73 53.2 63.32 28.61 87.92 53.2 102.22 38.89 63.32 0 24.42 38.89z" />
+            <path d="M0 63.3 14.31 48.99 28.62 63.3 14.31 77.61z" />
+            <path d="M38.73 73.41 63.32 98 87.92 73.41 102.22 87.72 63.32 126.61 24.42 87.72z" />
+            <path d="M97.99 63.3 112.3 48.99 126.61 63.3 112.3 77.61z" />
+            <path d="M52.41 63.3 63.32 52.4 74.22 63.3 63.32 74.21z" />
+          </g>
+        </svg>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      function mulberry32(a) {
+        return function () {
+          let t = (a += 0x6d2b79f5);
+          t = Math.imul(t ^ (t >>> 15), t | 1);
+          t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+          return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+        };
+      }
+
+      const rnd = mulberry32(20260908);
+      const canvas = document.getElementById("paint");
+      const ctx = canvas.getContext("2d");
+      const YELLOW = ["#f0b90b", "#c9a227", "#8a7020", "#d8c9a0", "#6e684e"];
+      const strokes = [];
+      for (let i = 0; i < 420; i++) {
+        const x0 = rnd() * 1920;
+        const y0 = rnd() * 1080;
+        const ang = rnd() * Math.PI * 2;
+        const len = 40 + rnd() * 280;
+        strokes.push({
+          x0,
+          y0,
+          x1: x0 + Math.cos(ang) * len,
+          y1: y0 + Math.sin(ang) * len,
+          w: 1.2 + rnd() * 7,
+          c: YELLOW[(i * 3) % YELLOW.length],
+          a: 0.08 + rnd() * 0.22,
+        });
+      }
+
+      function drawPaint(p) {
+        ctx.clearRect(0, 0, 1920, 1080);
+        const n = Math.floor(strokes.length * Math.min(1, Math.max(0, p)));
+        for (let i = 0; i < n; i++) {
+          const s = strokes[i];
+          ctx.strokeStyle = s.c;
+          ctx.globalAlpha = s.a;
+          ctx.lineWidth = s.w;
+          ctx.lineCap = "round";
+          ctx.beginPath();
+          ctx.moveTo(s.x0, s.y0);
+          const mx = (s.x0 + s.x1) / 2 + (i % 2 ? 18 : -18);
+          const my = (s.y0 + s.y1) / 2 + (i % 3 ? 12 : -12);
+          ctx.quadraticCurveTo(mx, my, s.x1, s.y1);
+          ctx.stroke();
+        }
+        ctx.globalAlpha = 1;
+      }
+
+      const paths = ["#bn1", "#bn2", "#bn3", "#bn4", "#bn5"];
+      paths.forEach((sel) => {
+        const el = document.querySelector(sel);
+        const len = el.getTotalLength();
+        el.style.strokeDasharray = String(len);
+        el.style.strokeDashoffset = String(len);
+      });
+
+      const paintState = { p: 0 };
+      const tl = gsap.timeline({ paused: true });
+
+      tl.to(paintState, {
+        p: 1,
+        duration: 60,
+        ease: "none",
+        onUpdate: function () {
+          drawPaint(paintState.p);
+        },
+      }, 0);
+
+      tl.fromTo("#logo", { scale: 0.82, rotation: -8, opacity: 0 }, { scale: 1, rotation: 0, opacity: 1, duration: 0.9, ease: "back.out(1.6)" }, 0.15);
+      tl.fromTo("#k-os", { y: 24, opacity: 0 }, { y: 0, opacity: 1, duration: 0.5, ease: "power3.out" }, 0.2);
+      paths.forEach((sel, i) => {
+        tl.fromTo(sel, { strokeDashoffset: Number(document.querySelector(sel).style.strokeDashoffset) }, { strokeDashoffset: 0, duration: 0.7, ease: "power2.inOut" }, 0.35 + i * 0.08);
+      });
+      tl.to("#in-logo", { x: -90, opacity: 0, duration: 0.4, ease: "power4.in" }, 5.55);
+      tl.set("#in-logo", { opacity: 0 }, 6);
+
+      tl.fromTo("#k-skill", { x: 70, opacity: 0 }, { x: 0, opacity: 1, duration: 0.45, ease: "power3.out" }, 6.05);
+      tl.fromTo("#title", { x: 90, opacity: 0 }, { x: 0, opacity: 1, duration: 0.7, ease: "power4.out" }, 6.15);
+      tl.fromTo("#title-sub", { y: 18, opacity: 0 }, { y: 0, opacity: 1, duration: 0.4, ease: "power2.out" }, 6.6);
+      tl.to("#in-title", { x: -90, opacity: 0, duration: 0.4, ease: "power4.in" }, 13.55);
+      tl.set("#in-title", { opacity: 0 }, 14);
+
+      tl.fromTo("#k-hook", { x: 70, opacity: 0 }, { x: 0, opacity: 1, duration: 0.4, ease: "power3.out" }, 14.05);
+      tl.fromTo("#hook", { x: 80, opacity: 0 }, { x: 0, opacity: 1, duration: 0.65, ease: "power3.out" }, 14.2);
+      tl.fromTo("#hook-sub", { y: 16, opacity: 0 }, { y: 0, opacity: 1, duration: 0.45, ease: "power2.out" }, 14.75);
+      tl.to("#in-hook", { x: -90, opacity: 0, duration: 0.45, ease: "power4.in" }, 23.5);
+      tl.set("#in-hook", { opacity: 0 }, 24);
+
+      tl.fromTo("#k-gates", { x: 70, opacity: 0 }, { x: 0, opacity: 1, duration: 0.4, ease: "power3.out" }, 24.05);
+      ["#g1", "#g2", "#g3", "#g4", "#g5", "#g6"].forEach((sel, i) => {
+        const t0 = 24.5 + i * 0.55;
+        tl.fromTo(sel, { x: 70, opacity: 0 }, { x: 0, opacity: 1, duration: 0.42, ease: "power3.out" }, t0);
+        tl.fromTo(sel + " .tick", { scale: 0 }, { scale: 1, duration: 0.28, ease: "back.out(2.2)" }, t0 + 0.12);
+        tl.fromTo(sel + " .gbar", { scaleX: 0 }, { scaleX: 1, duration: 0.45, ease: "power2.out" }, t0 + 0.16);
+      });
+      tl.to("#in-gates", { x: -90, opacity: 0, duration: 0.4, ease: "power4.in" }, 41.55);
+      tl.set("#in-gates", { opacity: 0 }, 42);
+
+      tl.fromTo("#k-out", { x: 70, opacity: 0 }, { x: 0, opacity: 1, duration: 0.4, ease: "power3.out" }, 42.05);
+      tl.fromTo("#c-rej", { x: 80, opacity: 0 }, { x: 0, opacity: 1, duration: 0.5, ease: "power3.out" }, 42.2);
+      tl.fromTo("#c-pass", { x: 80, opacity: 0 }, { x: 0, opacity: 1, duration: 0.5, ease: "power3.out" }, 42.45);
+      tl.to("#in-out", { x: -90, opacity: 0, duration: 0.4, ease: "power4.in" }, 51.55);
+      tl.set("#in-out", { opacity: 0 }, 52);
+
+      tl.fromTo("#k-end", { x: 70, opacity: 0 }, { x: 0, opacity: 1, duration: 0.4, ease: "power3.out" }, 52.05);
+      tl.fromTo("#end-title", { x: 80, opacity: 0 }, { x: 0, opacity: 1, duration: 0.6, ease: "power4.out" }, 52.2);
+      tl.fromTo("#end-sub", { y: 14, opacity: 0 }, { y: 0, opacity: 1, duration: 0.4, ease: "power2.out" }, 52.7);
+
+      tl.fromTo("#bug-mark", { scale: 0.6, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.4, ease: "back.out(1.8)" }, 6.1);
+
+      drawPaint(0);
+      window.__timelines["main"] = tl;
+    </script>
+  </body>
+</html>
