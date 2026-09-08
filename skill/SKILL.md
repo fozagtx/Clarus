@@ -34,7 +34,7 @@ Attention ingest  →  Safety filter  →  Confluence  →  Unsigned payload
 | Store, request, or handle private keys, seeds, or session signers | Operator wallet only |
 | Take-profit, stop-loss, or any on-chain exit | No position management |
 | Telegram, Solana, Jupiter, or RugCheck as the product path | BNB Chain + GoPlus only |
-| Skip a failed gate | Reject is the product |
+| Skip a failed gate | First fail stops. No URL. |
 | Invent token metrics | Live call fails → say so and stop |
 
 Full rule files: [../rules/no-execution.md](../rules/no-execution.md), [../rules/firewall-integrity.md](../rules/firewall-integrity.md).

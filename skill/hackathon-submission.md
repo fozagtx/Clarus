@@ -17,10 +17,10 @@ Contest: **Binance Agent OS Mini Hackathon**. Track A = AI agent + Agent OS. Thi
 | Prompt | Show |
 |---|---|
 | `/ingest-sprint` | Live BSC feed, CAs from GeckoTerminal / Dexscreener |
-| `/evaluate-ca 0x…` | Six gates, fail closed, GoPlus + Dexscreener numbers |
+| `/evaluate-ca 0x…` | Six gates. GoPlus + Dexscreener numbers |
 | `/risk-report` | The block in [risk-report.md](risk-report.md) |
-| PASS (rare) | Unsigned PancakeSwap + Binance Web3 URLs + **Clarus does not execute this swap.** |
-| REJECT (usual) | The gate that fired. Reject stream is the product |
+| PASS (all six) | Unsigned PancakeSwap + Binance Web3 URLs + **Clarus does not execute this swap.** |
+| REJECT (any fail) | The gate that fired. Payload `none` |
 
 ## What not to claim
 

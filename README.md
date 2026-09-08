@@ -1,12 +1,12 @@
 # Clarus
 
-A contract address hits BNB Chain. Most trading agents buy it.
+A contract address hits BNB Chain. Clarus does not buy it.
 
-Clarus does not. It reads GoPlus and Dexscreener, runs six gates, and prints REJECT or PASS. The first failed gate stops the run. It never signs a swap. It never asks for a key.
+It reads GoPlus and Dexscreener, runs six gates, and prints REJECT or PASS. The first failed gate stops the run. It never signs a swap. It never asks for a key.
 
 People lose money on mintable tokens, unlocked LP, a wallet sitting on too much supply, and a ticker story nobody checked. Clarus is that check. You read the report before you touch the trade.
 
-If all six gates pass, you get a PancakeSwap URL and a Binance Web3 link. You still have to sign in your own wallet. Most addresses will not get that far.
+If all six gates pass, you get a PancakeSwap URL and a Binance Web3 link. You still sign in your own wallet. A failed gate means no URL.
 
 Track A skill for the Binance Agent OS Mini Hackathon. Markdown only. No app. No `npm`.
 
