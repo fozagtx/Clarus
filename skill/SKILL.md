@@ -5,9 +5,9 @@ description: "Use when ingesting BSC meme attention, scoring a BNB Chain contrac
 
 # Clarus
 
-Onchain meme intelligence as a **read-only Agent OS skill**. Four phases from the Binance Agent / Workflow Creation Contest blueprint — attention ingest, safety filter, confluence, unsigned payload — with one hard law: **this skill never executes a trade**.
+A CA on BNB Chain (`chainId` 56). Six live gates. REJECT or PASS. This skill never executes a trade.
 
-Chain is **BNB Chain (`chainId` 56)** only. Quotes and payloads are **PancakeSwap v2 + Binance Web3 Wallet** deep links. The operator signs in their own wallet if they choose to. Clarus stops at the payload.
+Payloads are PancakeSwap v2 and Binance Web3 deep links. The operator signs in their own wallet. Clarus stops at the URL.
 
 ```
 Attention ingest  →  Safety filter  →  Confluence  →  Unsigned payload
