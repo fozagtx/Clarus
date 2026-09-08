@@ -8,7 +8,7 @@ Contest: **Binance Agent OS Mini Hackathon**. Track A = AI agent + Agent OS. Thi
 |---|---|
 | 1 | Clone the repo. Run `bash tests/validate_structure.sh`. |
 | 2 | `./install.sh -y` (or load `skill/SKILL.md` in Binance Agent OS). |
-| 3 | Tell the agent: load `CLAUDE.md`, then `skill/SKILL.md`. Never sign. |
+| 3 | Tell the agent: load `skill/SKILL.md`. Never sign. |
 | 4 | `/skill-demo` or `/evaluate-ca 0x…`. |
 | 5 | Full step-by-step: repo [README.md](../README.md). |
 

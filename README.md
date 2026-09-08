@@ -1,8 +1,10 @@
 # Clarus
 
-A read-only Agent OS **skill** that turns BNB Chain meme attention into a fail-closed risk report and, only on a full pass, an **unsigned** PancakeSwap / Binance Web3 payload.
+Most agent trading tools are built for unverified execution under pressure. Clarus is built for first and deep research before you even think of touching a trade. A lot of traders have lost money to wrong contracts, wrong trades, and narratives that were never deeply verified and approved.
 
-It never executes a trade. It never holds keys.
+Clarus is a read-only Agent OS **skill**. It turns BNB Chain meme attention into a fail-closed risk report. Only if every gate passes does it return an **unsigned** PancakeSwap / Binance Web3 payload. You research. You decide. It never executes.
+
+It never holds keys.
 
 Built for the Binance Agent OS Mini Hackathon, Track A.
 
@@ -29,7 +31,7 @@ Other users can reproduce Clarus with git, bash, and any Agent OS–compatible a
 | 2 | Clone this repo | Working copy of the kit |
 | 3 | `bash tests/validate_structure.sh` | `Structure validation passed.` |
 | 4 | Install the skill | `skill/` in the agent skills dir |
-| 5 | Load `CLAUDE.md` + `skill/SKILL.md` | Agent knows Clarus; will not ask for keys |
+| 5 | Load `skill/SKILL.md` | Agent knows Clarus; will not ask for keys |
 | 6 | `/skill-demo` or `/evaluate-ca 0x…` | Live risk report |
 | 7 | Check the report contract | Every line below, including the no-execute sentence |
 
@@ -67,10 +69,10 @@ chmod +x install.sh install-custom.sh
 
 | Method | Command | Result |
 |---|---|---|
-| Default Agent OS layout | `./install.sh -y` | `skill/` → `~/.agents/skills/clarus/`; `CLAUDE.md` → `~/.agents/AGENTS.md` |
+| Default Agent OS layout | `./install.sh -y` | `skill/` → `~/.agents/skills/clarus/` |
 | Pick a target | `./install-custom.sh` | See destination table below |
 | Manual copy | `mkdir -p ~/.agents/skills/clarus && cp -R skill/. ~/.agents/skills/clarus/` | Same files, no script |
-| Binance Agent OS | Open this repo or paste `skill/SKILL.md`; point session at `CLAUDE.md` | Restart/refresh so `clarus` appears |
+| Binance Agent OS | Open this repo or paste `skill/SKILL.md` | Restart/refresh so `clarus` appears |
 
 `install-custom.sh` destinations:
 
@@ -81,13 +83,13 @@ chmod +x install.sh install-custom.sh
 | 3 | `./skills/clarus` |
 | 4 | path you type |
 
-Keep `agents/`, `commands/`, `rules/`, and `CLAUDE.md` in the cloned repo. Progressive disclosure points at those files.
+Keep `agents/`, `commands/`, and `rules/` in the cloned repo. Progressive disclosure in `skill/SKILL.md` points at those files.
 
 ### 5. Load the skill
 
 | You say | When |
 |---|---|
-| `Load the Clarus skill. Read CLAUDE.md, then skill/SKILL.md. Never sign, never broadcast, never ask for keys.` | First session in this repo |
+| `Load the Clarus skill. Read skill/SKILL.md. Never sign, never broadcast, never ask for keys.` | First session in this repo |
 | `Use the clarus skill.` | After `./install.sh -y` |
 | `what skills do you have?` | Confirm it loaded (restart once if it does not) |
 
@@ -156,9 +158,6 @@ Full bans: [rules/no-execution.md](rules/no-execution.md), [rules/firewall-integ
 
 | Path | Role |
 |---|---|
-| [ARTICLE.md](ARTICLE.md) | Contest write-up |
-| [CLAUDE.md](CLAUDE.md) | Agent prompt + progressive disclosure |
-| [SUBMISSION.md](SUBMISSION.md) | Track A demo prompts |
 | [install.sh](install.sh) | Copies `skill/` → `~/.agents/skills/clarus/` |
 | [install-custom.sh](install-custom.sh) | Alternate install targets |
 | [skill/SKILL.md](skill/SKILL.md) | Skill entrypoint |
