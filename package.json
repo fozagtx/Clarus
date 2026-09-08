@@ -2,7 +2,7 @@
   "name": "clarus",
   "version": "0.1.0",
   "private": true,
-  "description": "Clarus: Binance Agent OS Track A researcher for BNB Chain. Six-gate firewall, unsigned PancakeSwap / Binance Web3 payloads. Never holds private keys.",
+  "description": "Clarus: Binance Agent OS Track A skill. BNB Chain six-gate firewall. Unsigned PancakeSwap / Binance Web3 payloads. Never holds private keys.",
   "scripts": {
     "dev": "next dev -p 3000",
     "build": "next build",
