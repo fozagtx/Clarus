@@ -45,7 +45,7 @@
     },
     {
       "if": "$50 clip slippage > 2%",
-      "then": "shrink suggested size until ≤2%"
+      "then": "REJECT. Do not shrink the clip to force a pass."
     },
     {
       "if": "all checks pass",

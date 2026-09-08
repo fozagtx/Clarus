@@ -6,7 +6,7 @@
   "track": "A",
   "chain": "bsc",
   "chainId": 56,
-  "skill": "./SKILL.md",
+  "skill": "./skill/SKILL.md",
   "workflow": "./agent/workflow.json",
   "mcp": {
     "transport": "http",

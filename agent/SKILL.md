@@ -1,20 +1,10 @@
 ---
 name: clarus
-description: >
-  Binance Agent OS Track A skill for BNB Chain. Six-gate firewall on BEP-20
-  contracts. Unsigned PancakeSwap / Binance Web3 payloads only after PASS.
-  Never holds keys. Never broadcasts.
-metadata:
-  contest: Binance Agent OS Mini Hackathon
-  track: A
-  chain: bsc
-  chainId: 56
+description: "Use when evaluating a BNB Chain CA with Clarus. Load ../skill/SKILL.md. Never execute a trade."
 ---
 
-# Clarus
+# Clarus (Agent OS pointer)
 
-Load this skill when evaluating BSC tokens or ingesting live BNB Chain launches.
+The skill lives at [../skill/SKILL.md](../skill/SKILL.md).
 
-Point Agent OS at the MCP server in `mcp.json` (`POST /api/mcp`).
-
-Follow `../SKILL.md` for the full procedure, tools, and fail-closed gates.
+Optional MCP: [mcp.json](mcp.json) → `POST /api/mcp`. Tools never sign.

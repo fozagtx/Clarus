@@ -8,7 +8,7 @@ export default function HomePage() {
       </p>
       <h1 style={{ fontWeight: 500, fontSize: 28, margin: "8px 0 12px" }}>Clarus</h1>
       <p>
-        Six-gate BNB Chain firewall. Load <code>SKILL.md</code> in Agent OS and connect MCP at{" "}
+        Six-gate BNB Chain firewall. Load <code>skill/SKILL.md</code> in Agent OS. Optional MCP at{" "}
         <code>/api/mcp</code>. Unsigned PancakeSwap / Binance Web3 links only after PASS. No keys.
       </p>
       <p>
