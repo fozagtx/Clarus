@@ -16,6 +16,12 @@ rules/     no-execution, firewall-integrity
 
 Logic is the contest blueprint (attention → shield → confluence → payload) with the payload **unsigned**. There is no app, no dashboard, and no MCP server in this repo.
 
+## How others replicate it
+
+Follow **How to replicate this agent** in [README.md](README.md): clone → `bash tests/validate_structure.sh` → `./install.sh -y` → load `CLAUDE.md` + `skill/SKILL.md` → `/skill-demo` or `/evaluate-ca 0x…`.
+
+No `npm`, no keys, no server. Live HTTP reads only (GoPlus, Dexscreener, GeckoTerminal).
+
 ## Demo prompts
 
 ```

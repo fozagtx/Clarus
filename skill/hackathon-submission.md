@@ -2,6 +2,14 @@
 
 Contest: **Binance Agent OS Mini Hackathon**. Track A = AI agent + Agent OS. This skill is Track A. It is **not** Track B autonomous trading.
 
+## How another user runs this skill
+
+1. Clone the repo. Run `bash tests/validate_structure.sh`.
+2. `./install.sh -y` (or load `skill/SKILL.md` in Binance Agent OS).
+3. Tell the agent: load `CLAUDE.md`, then `skill/SKILL.md`. Never sign.
+4. `/skill-demo` or `/evaluate-ca 0x…`.
+5. Full step-by-step: repo [README.md](../README.md).
+
 ## What to show in a demo
 
 1. `/ingest-sprint` — live BSC feed, CAs from GeckoTerminal / Dexscreener.
