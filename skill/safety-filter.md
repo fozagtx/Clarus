@@ -32,8 +32,10 @@ Largest **non-AMM** holder (`is_contract !== "1"`) must be **≤ 3.5%** of suppl
 
 Reject when:
 
-- `honeypot_with_same_creator === "1"`, or
-- two or more top EOA holders share the same `funding_source` / creator cluster in the GoPlus payload.
+| Signal | Fail |
+|---|---|
+| Same-creator honeypot | `honeypot_with_same_creator === "1"` |
+| Shared funding | Two or more top EOA holders share the same `funding_source` / creator cluster |
 
 If the field is absent, do not invent a pass — note `unknown` and still fail closed on this gate unless the rest of the holder set is clearly diversified **and** Gate 3 passed. Default: reject on unknown cluster when holders look synchronized (same tiny %).
 

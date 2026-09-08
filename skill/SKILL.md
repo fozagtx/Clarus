@@ -16,22 +16,26 @@ Attention ingest  →  Safety filter  →  Confluence  →  Unsigned payload
 
 ## Load this first
 
-1. [attention-ingest.md](attention-ingest.md) — Phase 1: trending keywords ↔ newly posted CAs
-2. [safety-filter.md](safety-filter.md) — Phase 2: mint / LP / holder / cluster (fail closed)
-3. [confluence.md](confluence.md) — Phase 3: Vol/MC ≥ 80%, $50 clip ≤ 2% slippage
-4. [unsigned-payload.md](unsigned-payload.md) — Phase 4: unsigned URL only. No keys. No broadcast.
-5. [risk-report.md](risk-report.md) — scannable RugCheck-emulator block
-6. [hackathon-submission.md](hackathon-submission.md) — Track A demo, what not to claim
-7. [resources.md](resources.md) — GoPlus, Dexscreener, GeckoTerminal
+| Module | Open when |
+|---|---|
+| [attention-ingest.md](attention-ingest.md) | Phase 1: trending keywords ↔ newly posted CAs |
+| [safety-filter.md](safety-filter.md) | Phase 2: mint / LP / holder / cluster (fail closed) |
+| [confluence.md](confluence.md) | Phase 3: Vol/MC ≥ 80%, $50 clip ≤ 2% slippage |
+| [unsigned-payload.md](unsigned-payload.md) | Phase 4: unsigned URL only. No keys. No broadcast. |
+| [risk-report.md](risk-report.md) | Scannable RugCheck-emulator block |
+| [hackathon-submission.md](hackathon-submission.md) | Track A demo, what not to claim |
+| [resources.md](resources.md) | GoPlus, Dexscreener, GeckoTerminal |
 
 ## Hard bans (read before any run)
 
-- Do **not** execute, sign, broadcast, or submit any swap.
-- Do **not** store, request, or handle private keys, seed phrases, or session signers.
-- Do **not** implement take-profit, stop-loss, or any on-chain exit.
-- Do **not** use Telegram, Solana, Jupiter, or RugCheck as the product path.
-- Do **not** skip a failed gate. Reject is the product.
-- Do **not** invent token metrics. If a live call fails, say so and stop.
+| Do not | Why |
+|---|---|
+| Execute, sign, broadcast, or submit any swap | This skill is read-only |
+| Store, request, or handle private keys, seeds, or session signers | Operator wallet only |
+| Take-profit, stop-loss, or any on-chain exit | No position management |
+| Telegram, Solana, Jupiter, or RugCheck as the product path | BNB Chain + GoPlus only |
+| Skip a failed gate | Reject is the product |
+| Invent token metrics | Live call fails → say so and stop |
 
 Full rule files: [../rules/no-execution.md](../rules/no-execution.md), [../rules/firewall-integrity.md](../rules/firewall-integrity.md).
 

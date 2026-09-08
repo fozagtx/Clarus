@@ -24,12 +24,19 @@ Do not dump every module into context. Open SKILL.md, then only the phase you ar
 
 Delegate; do not merge roles in one blob:
 
-- [agents/ingest-analyst.md](agents/ingest-analyst.md)
-- [agents/firewall-verifier.md](agents/firewall-verifier.md)
-- [agents/confluence-analyst.md](agents/confluence-analyst.md)
-- [agents/payload-coach.md](agents/payload-coach.md)
-- [agents/skill-demo-coach.md](agents/skill-demo-coach.md)
+| Agent | File |
+|---|---|
+| Ingest | [agents/ingest-analyst.md](agents/ingest-analyst.md) |
+| Firewall | [agents/firewall-verifier.md](agents/firewall-verifier.md) |
+| Confluence | [agents/confluence-analyst.md](agents/confluence-analyst.md) |
+| Payload | [agents/payload-coach.md](agents/payload-coach.md) |
+| Demo | [agents/skill-demo-coach.md](agents/skill-demo-coach.md) |
 
 ## Slash commands
 
-[commands/ingest-sprint.md](commands/ingest-sprint.md) · [commands/evaluate-ca.md](commands/evaluate-ca.md) · [commands/risk-report.md](commands/risk-report.md) · [commands/skill-demo.md](commands/skill-demo.md)
+| Command | File |
+|---|---|
+| `/ingest-sprint` | [commands/ingest-sprint.md](commands/ingest-sprint.md) |
+| `/evaluate-ca` | [commands/evaluate-ca.md](commands/evaluate-ca.md) |
+| `/risk-report` | [commands/risk-report.md](commands/risk-report.md) |
+| `/skill-demo` | [commands/skill-demo.md](commands/skill-demo.md) |
