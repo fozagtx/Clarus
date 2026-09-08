@@ -22,7 +22,7 @@ Attention ingest  →  Safety filter  →  Confluence  →  Unsigned payload
 4. [unsigned-payload.md](unsigned-payload.md) — Phase 4: unsigned URL only. No keys. No broadcast.
 5. [risk-report.md](risk-report.md) — scannable RugCheck-emulator block
 6. [hackathon-submission.md](hackathon-submission.md) — Track A demo, what not to claim
-7. [resources.md](resources.md) — GoPlus, Dexscreener, GeckoTerminal, Agent OS MCP
+7. [resources.md](resources.md) — GoPlus, Dexscreener, GeckoTerminal
 
 ## Hard bans (read before any run)
 
@@ -53,10 +53,6 @@ Full rule files: [../rules/no-execution.md](../rules/no-execution.md), [../rules
 | `/evaluate-ca` | [../commands/evaluate-ca.md](../commands/evaluate-ca.md) |
 | `/risk-report` | [../commands/risk-report.md](../commands/risk-report.md) |
 | `/skill-demo` | [../commands/skill-demo.md](../commands/skill-demo.md) |
-
-## Optional runtime
-
-This kit is Markdown. If the Clarus repo is running locally, agents **may** call `POST /api/mcp` (`initialize` → `tools/list` → `tools/call`). Tools: `ingest_recent`, `evaluate_token`, `build_swap_payload`, `get_board`, `get_health`. MCP does not sign. Skip the server if it is down — still complete the report from live HTTP APIs in [resources.md](resources.md).
 
 ## Output contract
 

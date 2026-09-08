@@ -26,15 +26,7 @@ topHolderPct    ← max holders percent where is_contract !== "1"
 sameCreator     ← honeypot_with_same_creator === "1"
 ```
 
-## Optional MCP (this repo)
-
-`POST /api/mcp` JSON-RPC 2.0. Protocol `2025-03-26`.
-
-1. `{ "jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2025-03-26","capabilities":{},"clientInfo":{"name":"clarus-skill","version":"1.0.0"}} }`
-2. `{ "jsonrpc":"2.0","id":2,"method":"tools/list" }`
-3. `{ "jsonrpc":"2.0","id":3,"method":"tools/call","params":{"name":"evaluate_token","arguments":{"mint":"0x…"}} }`
-
-`build_swap_payload` returns URLs only. It does not send a transaction.
+Fetch these with ordinary HTTP. This kit has no server.
 
 ## Banned sources (product path)
 

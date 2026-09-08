@@ -42,4 +42,4 @@ A scannable risk report (mint, LP, holder, cluster, Vol/MC, clip impact) and eit
 
 ## Why it fits Track A
 
-Ready-made APIs (GoPlus, Dexscreener, GeckoTerminal). Strict gates from a trading manual. Agent OS skill layout (SKILL.md modules, sub-agents, slash commands, rules). Optional HTTP MCP in this repo for the same tools — still no keys.
+Ready-made APIs (GoPlus, Dexscreener, GeckoTerminal). Strict gates from a trading manual. Agent OS skill layout (SKILL.md modules, sub-agents, slash commands, rules). Markdown only — no app, no keys.

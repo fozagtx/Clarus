@@ -10,8 +10,6 @@ Contest: **Binance Agent OS Mini Hackathon**. Track A = AI agent + Agent OS. Thi
 4. On a rare PASS: unsigned PancakeSwap + Binance Web3 URLs, plus **Clarus does not execute this swap.**
 5. On the common REJECT: show the gate that fired. Reject stream is the product.
 
-Optional: `POST /api/mcp` `tools/call` `evaluate_token` if the repo server is up.
-
 ## What not to claim
 
 - That Clarus bought, sold, or managed a position
