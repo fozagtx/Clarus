@@ -42,7 +42,7 @@ export const MCP_TOOLS = [
   },
   {
     name: "get_board",
-    description: "Return the current Clarus HUD snapshot: health, ingest/reject log, and latest evaluations.",
+    description: "Return this session's ingest/reject log and latest evaluations.",
     inputSchema: { type: "object", properties: {}, additionalProperties: false },
   },
   {
