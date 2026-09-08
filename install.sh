@@ -4,7 +4,6 @@ set -euo pipefail
 SKILL_NAME="clarus"
 SOURCE_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 TARGET_DIR="${HOME}/.agents/skills/${SKILL_NAME}"
-CONFIG_TARGET="${HOME}/.agents/AGENTS.md"
 YES=0
 
 for arg in "$@"; do
@@ -25,11 +24,6 @@ fi
 
 mkdir -p "$TARGET_DIR"
 cp -R "$SOURCE_DIR/skill/." "$TARGET_DIR/"
-
-if [[ -f "$SOURCE_DIR/CLAUDE.md" ]]; then
-  mkdir -p "$(dirname "$CONFIG_TARGET")"
-  cp "$SOURCE_DIR/CLAUDE.md" "$CONFIG_TARGET"
-fi
 
 echo "Installed $SKILL_NAME to $TARGET_DIR"
 echo "Clarus never executes a trade. Unsigned payloads only."

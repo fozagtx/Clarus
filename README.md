@@ -1,8 +1,10 @@
 # Clarus
 
-A read-only Agent OS **skill** that turns BNB Chain meme attention into a fail-closed risk report and, only on a full pass, an **unsigned** PancakeSwap / Binance Web3 payload.
+Most agent trading tools are built for unverified execution under pressure. Clarus is built for first and deep research before you even think of touching a trade. A lot of traders have lost money to wrong contracts, wrong trades, and narratives that were never deeply verified and approved.
 
-It never executes a trade. It never holds keys.
+Clarus is a read-only Agent OS **skill**. It turns BNB Chain meme attention into a fail-closed risk report. Only if every gate passes does it return an **unsigned** PancakeSwap / Binance Web3 payload. You research. You decide. It never executes.
+
+It never holds keys.
 
 Built for the Binance Agent OS Mini Hackathon, Track A.
 
@@ -10,12 +12,12 @@ Built for the Binance Agent OS Mini Hackathon, Track A.
 
 ## What It Does
 
-Four phases from the contest blueprint, with execution stripped:
-
-1. **Attention ingest**: live BSC new/trending pools (GeckoTerminal, Dexscreener). Pair ticker ↔ CA. No X/Telegram scrape.
-2. **Safety filter**: mint/owner, LP ≥95% locked/burned, top EOA holder ≤3.5%, no same-origin cluster. Fail closed.
-3. **Confluence**: 24h volume ≥ 80% of market cap; hypothetical $50 clip ≤ 2% impact.
-4. **Unsigned payload**: PancakeSwap URL + Binance Web3 deep link. Operator signs in their wallet or discards.
+| Phase | Job | Pass bar |
+|---|---|---|
+| 1 Attention ingest | Live BSC new/trending pools (GeckoTerminal, Dexscreener). Pair ticker ↔ CA. No X/Telegram scrape. | Feed row only — not a trade |
+| 2 Safety filter | Mint/owner, LP, top holder, same-origin cluster. Fail closed. | LP ≥95% locked/burned; top EOA ≤3.5% |
+| 3 Confluence | Tape + clip size | 24h volume ≥ 80% of MC; $50 clip ≤ 2% impact |
+| 4 Unsigned payload | PancakeSwap URL + Binance Web3 deep link | 6/6 gates only. Operator signs or discards |
 
 ---
 
@@ -23,13 +25,24 @@ Four phases from the contest blueprint, with execution stripped:
 
 Other users can reproduce Clarus with git, bash, and any Agent OS–compatible assistant that loads Markdown skills. There is no app to run, no `npm install`, and no API keys.
 
+| Step | Action | Expect |
+|---|---|---|
+| 1 | Meet prerequisites | git, bash, a skill-capable agent, outbound HTTPS |
+| 2 | Clone this repo | Working copy of the kit |
+| 3 | `bash tests/validate_structure.sh` | `Structure validation passed.` |
+| 4 | Install the skill | `skill/` in the agent skills dir |
+| 5 | Load `skill/SKILL.md` | Agent knows Clarus; will not ask for keys |
+| 6 | `/skill-demo` or `/evaluate-ca 0x…` | Live risk report |
+| 7 | Check the report contract | Every line below, including the no-execute sentence |
+
 ### 1. Prerequisites
 
-- `git` and `bash`
-- An AI agent that can load a local skill (Cursor, Claude Code, OpenClaw, or [Binance Agent OS](https://agent.binance.com))
-- Outbound HTTPS so the agent can read GoPlus, Dexscreener, and GeckoTerminal (all public, no keys)
-
-Do **not** put a private key, seed phrase, or Binance trading API secret anywhere. Clarus does not sign.
+| Need | Why |
+|---|---|
+| `git` + `bash` | Clone, validate, install |
+| Agent that loads a local skill | Cursor, Claude Code, OpenClaw, or [Binance Agent OS](https://agent.binance.com) |
+| Outbound HTTPS | Live GoPlus, Dexscreener, GeckoTerminal (public, no keys) |
+| **No** private key / seed / Binance trading secret | Clarus does not sign |
 
 ### 2. Clone the kit
 
@@ -46,24 +59,22 @@ bash tests/validate_structure.sh
 
 Expected line: `Structure validation passed.`
 
-This checks required files, `skill/SKILL.md` frontmatter (`name: clarus` and a `Use when …` description), module links, installer syntax, and the no-execution rule. Installers make **no network calls**.
+Installers make **no network calls**. The validator checks required files, `skill/SKILL.md` frontmatter (`name: clarus` and a `Use when …` description), module links, installer syntax, and the no-execution rule.
 
 ### 4. Install the skill into the agent
 
-**Default** (Agent OS / generic `~/.agents` layout):
-
 ```bash
 chmod +x install.sh install-custom.sh
-./install.sh -y
 ```
 
-That copies `skill/` → `~/.agents/skills/clarus/` and `CLAUDE.md` → `~/.agents/AGENTS.md`.
+| Method | Command | Result |
+|---|---|---|
+| Default Agent OS layout | `./install.sh -y` | `skill/` → `~/.agents/skills/clarus/` |
+| Pick a target | `./install-custom.sh` | See destination table below |
+| Manual copy | `mkdir -p ~/.agents/skills/clarus && cp -R skill/. ~/.agents/skills/clarus/` | Same files, no script |
+| Binance Agent OS | Open this repo or paste `skill/SKILL.md` | Restart/refresh so `clarus` appears |
 
-**Pick a target** (Claude Code, project-local, or a custom path):
-
-```bash
-./install-custom.sh
-```
+`install-custom.sh` destinations:
 
 | Selection | Destination |
 |---|---|
@@ -72,33 +83,15 @@ That copies `skill/` → `~/.agents/skills/clarus/` and `CLAUDE.md` → `~/.agen
 | 3 | `./skills/clarus` |
 | 4 | path you type |
 
-**Manual copy** (same result, no script):
-
-```bash
-mkdir -p ~/.agents/skills/clarus
-cp -R skill/. ~/.agents/skills/clarus/
-```
-
-Keep `agents/`, `commands/`, `rules/`, and `CLAUDE.md` in the cloned repo. Progressive disclosure points at those files.
-
-**Binance Agent OS:** open this repo (or paste `skill/SKILL.md` as the skill). Point the session at `CLAUDE.md`. Restart or refresh the agent so it discovers `clarus`.
+Keep `agents/`, `commands/`, and `rules/` in the cloned repo. Progressive disclosure in `skill/SKILL.md` points at those files.
 
 ### 5. Load the skill
 
-Tell the agent, in the same project:
-
-```text
-Load the Clarus skill. Read CLAUDE.md, then skill/SKILL.md.
-Never sign, never broadcast, never ask for keys.
-```
-
-Or invoke it by name after install:
-
-```text
-Use the clarus skill.
-```
-
-Ask `what skills do you have?` if you need to confirm it loaded. Restart the agent once if a fresh install does not appear yet.
+| You say | When |
+|---|---|
+| `Load the Clarus skill. Read skill/SKILL.md. Never sign, never broadcast, never ask for keys.` | First session in this repo |
+| `Use the clarus skill.` | After `./install.sh -y` |
+| `what skills do you have?` | Confirm it loaded (restart once if it does not) |
 
 ### 6. Run it
 
@@ -108,13 +101,8 @@ Ask `what skills do you have?` if you need to confirm it loaded. Restart the age
 | `/ingest-sprint` | Live BSC new + trending CAs (cap 8). No swap URLs. |
 | `/evaluate-ca 0x…` | Six gates on that BEP-20, fail closed, print the report |
 | `/risk-report` | Reprint the last evaluation in the report template |
-| `Is 0x… safe to touch on BSC?` | Same as `/evaluate-ca` (skill description is `Use when …`) |
-
-Natural-language equivalents work if the skill is loaded:
-
-```text
-Ingest the newest BNB Chain meme pools and show the feed.
-```
+| `Is 0x… safe to touch on BSC?` | Same as `/evaluate-ca` |
+| `Ingest the newest BNB Chain meme pools and show the feed.` | Same as `/ingest-sprint` |
 
 ```text
 Evaluate CA 0x<40 hex> on BNB Chain with the Clarus firewall.
@@ -123,49 +111,44 @@ Print the risk report. Do not execute a swap.
 
 ### 7. What a correct run looks like
 
-The agent must call **live HTTP** (see [skill/resources.md](skill/resources.md)):
+Live HTTP (see [skill/resources.md](skill/resources.md)):
 
-1. GeckoTerminal `new_pools` / `trending_pools` on `bsc` and/or Dexscreener `bsc` profiles
-2. GoPlus `token_security/56?contract_addresses=<ca>`
-3. Dexscreener `tokens/v1/bsc/<ca>` for volume, market cap, TVL
+| Phase | Call | For |
+|---|---|---|
+| Ingest | GeckoTerminal `new_pools` / `trending_pools` on `bsc`; Dexscreener `bsc` profiles | CA feed |
+| Shield | GoPlus `token_security/56?contract_addresses=<ca>` | Gates 1–4 |
+| Confluence | Dexscreener `tokens/v1/bsc/<ca>` | Volume, MC, TVL |
 
-Then it prints the [risk-report](skill/risk-report.md) block:
+Then it prints the [risk-report](skill/risk-report.md) block.
 
-```text
-CA: 0x…
-Chain: BNB Chain (56)
-…
-VERDICT: PASS | REJECT
-gatesPassed: k/6
-Payload: <url or none>
-Binance Web3: <url or none>
-Clarus does not execute this swap.
-```
-
-- **REJECT** (usual): stop. Payload is `none`. That is a successful replication.
-- **PASS** (rare, 6/6 only): unsigned PancakeSwap + Binance Web3 URLs. The human may open them in a wallet. The agent must not.
+| Verdict | When | Payload |
+|---|---|---|
+| REJECT | Any gate fails (usual) | `none` — this is a successful replication |
+| PASS | 6/6 only (rare) | Unsigned PancakeSwap + Binance Web3 URLs. Human may open them. Agent must not. |
 
 If GoPlus or Dexscreener fails, the agent says so and **rejects**. It must not invent numbers.
 
 ### 8. How to know you replicated it
 
-You have Clarus working when all of these are true:
-
-1. `bash tests/validate_structure.sh` passes
-2. The agent reads `skill/SKILL.md` before evaluating
-3. A live `/ingest-sprint` returns real BSC CAs (not fixtures)
-4. `/evaluate-ca 0x…` prints every gate as SAFE or FAIL
-5. Every report ends with **Clarus does not execute this swap.**
-6. No private key was requested or used
+| Check | Pass when |
+|---|---|
+| Validator | `bash tests/validate_structure.sh` prints `Structure validation passed.` |
+| Skill load | Agent reads `skill/SKILL.md` before evaluating |
+| Ingest | `/ingest-sprint` returns real BSC CAs (not fixtures) |
+| Evaluate | `/evaluate-ca 0x…` prints every gate as SAFE or FAIL |
+| Report footer | **Clarus does not execute this swap.** |
+| Keys | None requested or used |
 
 ### 9. What this agent must never do
 
-- Sign, broadcast, or submit a swap
-- Store or ask for keys / seeds
-- Take profit, stop-loss, or any on-chain exit
-- Scrape X or Telegram as the product path
-- Use Solana, Jupiter, or RugCheck
-- Skip a failed gate
+| Forbidden | Instead |
+|---|---|
+| Sign, broadcast, or submit a swap | Unsigned URL on 6/6 only |
+| Store or ask for keys / seeds | Operator wallet, outside the skill |
+| Take-profit, stop-loss, on-chain exit | Stop at the report |
+| Scrape X or Telegram as the product path | GeckoTerminal + Dexscreener listing velocity |
+| Solana, Jupiter, RugCheck | BNB Chain 56 + GoPlus |
+| Skip a failed gate | First fail = REJECT |
 
 Full bans: [rules/no-execution.md](rules/no-execution.md), [rules/firewall-integrity.md](rules/firewall-integrity.md).
 
@@ -173,41 +156,22 @@ Full bans: [rules/no-execution.md](rules/no-execution.md), [rules/firewall-integ
 
 ## Repository Structure
 
-```text
-.
-├── ARTICLE.md                  # Contest write-up (read-only agent thesis)
-├── CLAUDE.md                   # Agent system prompt & progressive disclosure
-├── SUBMISSION.md               # Track A demo prompts
-├── LICENSE                     # MIT License
-├── install.sh                  # Local installer script
-├── install-custom.sh           # Custom environment installer
-├── skill/
-│   ├── SKILL.md                # Skill entrypoint & routing
-│   ├── attention-ingest.md     # Phase 1
-│   ├── safety-filter.md        # Phase 2
-│   ├── confluence.md           # Phase 3
-│   ├── unsigned-payload.md     # Phase 4 — no keys, no broadcast
-│   ├── risk-report.md          # RugCheck-emulator printout
-│   ├── hackathon-submission.md
-│   ├── resources.md            # GoPlus / Dexscreener / GeckoTerminal
-│   └── examples/
-├── agents/
-│   ├── ingest-analyst.md
-│   ├── firewall-verifier.md
-│   ├── confluence-analyst.md
-│   ├── payload-coach.md
-│   └── skill-demo-coach.md
-├── commands/
-│   ├── ingest-sprint.md
-│   ├── evaluate-ca.md
-│   ├── risk-report.md
-│   └── skill-demo.md
-├── rules/
-│   ├── no-execution.md
-│   └── firewall-integrity.md
-└── tests/
-    └── validate_structure.sh
-```
+| Path | Role |
+|---|---|
+| [install.sh](install.sh) | Copies `skill/` → `~/.agents/skills/clarus/` |
+| [install-custom.sh](install-custom.sh) | Alternate install targets |
+| [skill/SKILL.md](skill/SKILL.md) | Skill entrypoint |
+| [skill/attention-ingest.md](skill/attention-ingest.md) | Phase 1 |
+| [skill/safety-filter.md](skill/safety-filter.md) | Phase 2 |
+| [skill/confluence.md](skill/confluence.md) | Phase 3 |
+| [skill/unsigned-payload.md](skill/unsigned-payload.md) | Phase 4 — no keys, no broadcast |
+| [skill/risk-report.md](skill/risk-report.md) | Report template |
+| [skill/resources.md](skill/resources.md) | Live HTTP sources |
+| [agents/](agents/) | Sub-agent roles |
+| [commands/](commands/) | `/ingest-sprint` `/evaluate-ca` `/risk-report` `/skill-demo` |
+| [rules/no-execution.md](rules/no-execution.md) | Never sign |
+| [rules/firewall-integrity.md](rules/firewall-integrity.md) | Fail closed |
+| [tests/validate_structure.sh](tests/validate_structure.sh) | Structure + hygiene |
 
 ---
 
