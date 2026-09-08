@@ -5,9 +5,9 @@ description: "Use when ingesting BSC meme attention, scoring a BNB Chain contrac
 
 # Clarus
 
-Onchain meme intelligence as a **read-only Agent OS skill**. Four phases from the Binance Agent / Workflow Creation Contest blueprint — attention ingest, safety filter, confluence, unsigned payload — with one hard law: **this skill never executes a trade**.
+A CA on BNB Chain (`chainId` 56). Six live gates. REJECT or PASS. This skill never executes a trade.
 
-Chain is **BNB Chain (`chainId` 56)** only. Quotes and payloads are **PancakeSwap v2 + Binance Web3 Wallet** deep links. The operator signs in their own wallet if they choose to. Clarus stops at the payload.
+Payloads are PancakeSwap v2 and Binance Web3 deep links. The operator signs in their own wallet. Clarus stops at the URL.
 
 ```
 Attention ingest  →  Safety filter  →  Confluence  →  Unsigned payload
@@ -34,7 +34,7 @@ Attention ingest  →  Safety filter  →  Confluence  →  Unsigned payload
 | Store, request, or handle private keys, seeds, or session signers | Operator wallet only |
 | Take-profit, stop-loss, or any on-chain exit | No position management |
 | Telegram, Solana, Jupiter, or RugCheck as the product path | BNB Chain + GoPlus only |
-| Skip a failed gate | Reject is the product |
+| Skip a failed gate | First fail stops. No URL. |
 | Invent token metrics | Live call fails → say so and stop |
 
 Full rule files: [../rules/no-execution.md](../rules/no-execution.md), [../rules/firewall-integrity.md](../rules/firewall-integrity.md).
