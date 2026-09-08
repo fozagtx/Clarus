@@ -1,14 +1,40 @@
 @import "tailwindcss";
 
+@theme {
+  --color-background: #fbfbf9;
+  --color-foreground: #1d1d16;
+  --color-card: #ffffff;
+  --color-card-foreground: #1d1d16;
+  --color-popover: #ffffff;
+  --color-muted: #ecece4;
+  --color-muted-foreground: #6b6b5c;
+  --color-accent: #ecece4;
+  --color-secondary: #ecece4;
+  --color-primary: #1d1d16;
+  --color-primary-foreground: #fbfbf9;
+  --color-border: #1d1d161f;
+  --color-input: #1d1d1626;
+  --color-ring: #7c7c67;
+  --color-brand: #d25611;
+  --color-brand-dark: #9e400a;
+  --color-brand-light: #c44e0e;
+  --color-destructive: #c43b40;
+  --color-pass: #2f6b32;
+  --color-warn: #9e400a;
+  --font-sans: var(--font-geist), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-plex), ui-monospace, SFMono-Regular, Menlo, monospace;
+  --radius-mockup: 10px;
+}
+
 :root {
-  --ink: #07090d;
-  --panel: #10151d;
-  --line: rgba(126, 255, 179, 0.16);
-  --phosphor: #7dffb3;
-  --amber: #ffb45a;
-  --danger: #ff5d73;
-  --ice: #8ad4ff;
-  --mute: #8a93a3;
+  --background: #fbfbf9;
+  --foreground: #1d1d16;
+  --card: #ffffff;
+  --muted-foreground: #6b6b5c;
+  --border: #1d1d161f;
+  --brand: #d25611;
+  --mockup-shell-radius: 10px;
+  --mockup-inner-radius: 8px;
 }
 
 * {
@@ -18,17 +44,16 @@
 html,
 body {
   min-height: 100%;
-  background: var(--ink);
-  color: #e8edf5;
+  background: var(--background);
+  color: var(--foreground);
 }
 
 body {
   margin: 0;
-  font-family: var(--font-mono), ui-monospace, SFMono-Regular, Menlo, monospace;
-  background-image:
-    radial-gradient(1200px 500px at 80% -10%, rgba(125, 255, 179, 0.08), transparent 55%),
-    radial-gradient(900px 420px at -10% 110%, rgba(138, 212, 255, 0.08), transparent 50%),
-    linear-gradient(180deg, #07090d 0%, #0b1018 100%);
+  font-family: var(--font-sans);
+  font-size: 16px;
+  line-height: 1.5;
+  background-color: #fbfbf9;
 }
 
 button,
@@ -36,15 +61,33 @@ input {
   font-family: inherit;
 }
 
-.hud-grid {
+.glass {
+  background: rgba(255, 255, 255, 0.72);
+  backdrop-filter: blur(28px) saturate(1.2);
+  -webkit-backdrop-filter: blur(28px) saturate(1.2);
+  border: 1px solid rgba(29, 29, 22, 0.12);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.9),
+    8px 8px 0 0 var(--brand);
+}
+
+.glass-quiet {
+  background: rgba(255, 255, 255, 0.78);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(29, 29, 22, 0.1);
+}
+
+.scenic {
   background-image:
-    linear-gradient(rgba(125, 255, 179, 0.04) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(125, 255, 179, 0.04) 1px, transparent 1px);
-  background-size: 28px 28px;
+    radial-gradient(80% 60% at 12% 0%, rgba(232, 192, 122, 0.35), transparent 55%),
+    radial-gradient(70% 50% at 100% 10%, rgba(210, 86, 17, 0.12), transparent 50%),
+    linear-gradient(180deg, #f4efe4 0%, #e8e4d6 100%);
+  background-size: cover;
 }
 
 .radar-sweep {
-  background: conic-gradient(from 0deg, transparent 0 78%, rgba(125, 255, 179, 0.18) 86%, transparent 100%);
+  background: conic-gradient(from 0deg, transparent 0 78%, rgba(210, 86, 17, 0.28) 86%, transparent 100%);
   animation: sweep 6s linear infinite;
 }
 
@@ -69,23 +112,25 @@ input {
   }
 }
 
-.ticker {
-  animation: ticker 28s linear infinite;
-}
-
-@keyframes ticker {
+@keyframes scrolling-banner {
   from {
     transform: translateX(0);
   }
   to {
-    transform: translateX(-50%);
+    transform: translateX(calc(-50% - 1rem));
   }
 }
 
-.panel {
-  background: linear-gradient(180deg, rgba(16, 21, 29, 0.92), rgba(12, 16, 23, 0.88));
-  border: 1px solid var(--line);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.03);
+.agent-marquee {
+  mask-image: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent);
+}
+
+.agent-marquee__track {
+  animation: scrolling-banner 36s linear infinite;
+}
+
+.agent-marquee:hover .agent-marquee__track {
+  animation-play-state: paused;
 }
 
 ::-webkit-scrollbar {
@@ -94,5 +139,5 @@ input {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: rgba(125, 255, 179, 0.2);
+  background: color-mix(in srgb, var(--brand) 35%, #ecece4);
 }

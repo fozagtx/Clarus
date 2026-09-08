@@ -1,17 +1,17 @@
 import type { Metadata } from "next";
-import { IBM_Plex_Mono, Syne } from "next/font/google";
+import { Geist, IBM_Plex_Mono } from "next/font/google";
 import "./globals.css";
 
-const syne = Syne({
+const geist = Geist({
   subsets: ["latin"],
-  variable: "--font-display",
-  weight: ["500", "600", "700", "800"],
+  variable: "--font-geist",
+  weight: ["100", "200", "300", "400", "500", "600", "700", "800", "900"],
 });
 
 const plex = IBM_Plex_Mono({
   subsets: ["latin"],
-  variable: "--font-mono",
-  weight: ["400", "500", "600"],
+  variable: "--font-plex",
+  weight: ["300", "400", "500"],
 });
 
 export const metadata: Metadata = {
@@ -19,6 +19,14 @@ export const metadata: Metadata = {
   description:
     "Binance Agent OS Track A agent for BNB Chain. Six-gate risk firewall. You remain the execution layer.",
   applicationName: "Clarus",
+  keywords: [
+    "Binance Agent OS",
+    "BNB Chain",
+    "Clarus",
+    "on-chain firewall",
+    "GoPlus",
+    "PancakeSwap",
+  ],
   icons: {
     icon: "/clarus-mark.png",
     apple: "/clarus-mark.png",
@@ -28,7 +36,9 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
-      <body className={`${syne.variable} ${plex.variable}`}>{children}</body>
+      <body className={`${geist.variable} ${plex.variable} relative overscroll-none bg-background font-sans antialiased text-foreground`}>
+        {children}
+      </body>
     </html>
   );
 }
