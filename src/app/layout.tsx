@@ -36,7 +36,7 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
-      <body className={`${geist.variable} ${plex.variable} relative overscroll-none font-sans antialiased`}>
+      <body className={`${geist.variable} ${plex.variable} relative overscroll-none bg-background font-sans antialiased text-foreground`}>
         {children}
       </body>
     </html>

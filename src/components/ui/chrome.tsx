@@ -70,7 +70,7 @@ export function StatTile({
   tone?: "pass" | "fail" | "brand";
 }) {
   const color =
-    tone === "pass" ? "text-pass" : tone === "fail" ? "text-destructive" : tone === "brand" ? "text-brand-light" : "text-foreground";
+    tone === "pass" ? "text-pass" : tone === "fail" ? "text-destructive" : tone === "brand" ? "text-brand" : "text-foreground";
   return (
     <div className="bg-card p-4">
       <dt className="font-mono text-[11px] font-medium tracking-[0.5px] text-muted-foreground">{label}</dt>

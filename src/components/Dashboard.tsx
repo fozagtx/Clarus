@@ -30,16 +30,6 @@ const EMPTY: Board = {
   passed: [],
 };
 
-const SOURCES = [
-  "GeckoTerminal",
-  "Dexscreener",
-  "GoPlus",
-  "PancakeSwap",
-  "Binance Web3",
-  "Agent OS",
-  "BNB Chain",
-];
-
 function fmtUsd(n: number) {
   if (!Number.isFinite(n)) return "—";
   if (n >= 1_000_000) return `$${(n / 1_000_000).toFixed(2)}M`;
@@ -135,7 +125,7 @@ export function Dashboard() {
 
   return (
     <div className="min-h-screen bg-background text-foreground">
-      <header className="fixed inset-x-0 top-0 z-50 h-14 border-b border-border bg-background/80 backdrop-blur-xl">
+      <header className="fixed inset-x-0 top-0 z-50 h-14 border-b border-border bg-background/85 backdrop-blur-xl">
         <div className="px-4 sm:px-8 lg:px-[30px]">
           <div className="mx-auto flex h-14 max-w-7xl items-center justify-between">
             <Link href="/" className="flex items-center gap-2">
@@ -178,10 +168,7 @@ export function Dashboard() {
               </Pill>
             </div>
             <div className="flex items-center gap-2 lg:hidden">
-              <Pill
-                className="bg-foreground text-background"
-                onClick={() => setLive((v) => !v)}
-              >
+              <Pill className="bg-foreground text-background" onClick={() => setLive((v) => !v)}>
                 {live ? "Live" : "Paused"}
               </Pill>
             </div>
@@ -189,127 +176,89 @@ export function Dashboard() {
         </div>
       </header>
 
-      <main className="flex flex-col bg-background pt-14">
-        <section className="relative overflow-hidden px-4 pb-8 pt-16 sm:px-8 sm:pt-20 lg:px-[30px]">
-          <div className="relative mx-auto w-full max-w-[1600px]">
-            <div className="mx-auto max-w-4xl text-center">
-              <h1 className="text-balance text-4xl font-normal leading-[0.98] tracking-[-0.5px] sm:text-5xl md:text-6xl lg:text-[4.75rem]">
-                Stop babysitting rugs. Start signing real work.
-              </h1>
-              <p className="mx-auto mt-6 max-w-4xl text-pretty text-base leading-8 text-muted-foreground sm:mt-7 sm:text-xl">
-                Binance Agent OS on BNB Chain. Clarus watches launches, runs a six-gate firewall, and only then
-                emits an unsigned PancakeSwap / Binance Web3 payload. Private keys never enter this process.
-              </p>
-            </div>
+      <main className="bg-background px-4 pb-10 pt-20 sm:px-8 lg:px-[30px]">
+        <div className="mx-auto max-w-7xl">
+          <p className="max-w-2xl text-sm leading-6 text-muted-foreground sm:text-base">
+            BNB Chain firewall for Binance Agent OS. Six gates, then an unsigned PancakeSwap / Binance Web3 link.
+            No private keys.
+          </p>
 
-            <form
-              className="mx-auto mt-8 flex max-w-3xl flex-col gap-2 sm:flex-row"
-              onSubmit={(e) => {
-                e.preventDefault();
-                void run("/api/evaluate", {
-                  headers: { "content-type": "application/json" },
-                  body: JSON.stringify({ address: mint, mint }),
-                });
-              }}
-            >
-              <input
-                value={mint}
-                onChange={(e) => setMint(e.target.value)}
-                placeholder="Paste a BNB Chain CA (0x…) — firewall evaluates in-process, never asks for a key"
-                className="h-12 flex-1 rounded-3xl border border-border bg-card/70 px-4 font-mono text-sm tracking-[0.3px] text-foreground outline-none ring-ring placeholder:text-muted-foreground focus:ring-1"
-              />
-              <button className="h-12 rounded-2xl bg-foreground px-6 text-sm font-semibold tracking-[-0.5px] text-background hover:opacity-90">
-                Scan
-              </button>
-            </form>
-            {error ? <p className="mx-auto mt-3 max-w-3xl text-center text-sm text-destructive">{error}</p> : null}
+          <form
+            className="mt-5 flex flex-col gap-2 sm:flex-row"
+            onSubmit={(e) => {
+              e.preventDefault();
+              void run("/api/evaluate", {
+                headers: { "content-type": "application/json" },
+                body: JSON.stringify({ address: mint, mint }),
+              });
+            }}
+          >
+            <input
+              value={mint}
+              onChange={(e) => setMint(e.target.value)}
+              placeholder="Paste a BNB Chain CA (0x…)"
+              className="h-12 flex-1 rounded-3xl border border-border bg-card px-4 font-mono text-sm text-foreground outline-none ring-ring placeholder:text-muted-foreground focus:ring-1"
+            />
+            <button className="h-12 rounded-2xl bg-foreground px-6 text-sm font-semibold tracking-[-0.5px] text-background hover:opacity-90">
+              Scan
+            </button>
+          </form>
+          {error ? <p className="mt-2 text-sm text-destructive">{error}</p> : null}
 
-            <div className="mx-auto mt-8 grid max-w-7xl grid-cols-2 gap-px bg-border sm:grid-cols-5">
-              <StatTile label="Ingest" value={String(board.health.ingestions)} />
-              <StatTile label="Pass" value={String(board.health.passed)} tone="pass" />
-              <StatTile label="Reject" value={String(board.health.rejected)} tone="fail" />
-              <StatTile label="Avg pipe" value={`${board.health.avgPipelineMs}ms`} />
-              <StatTile label="Filter" value={`${rejectRate}%`} tone="brand" />
-            </div>
+          <div className="mt-5 grid grid-cols-2 gap-px bg-border sm:grid-cols-5">
+            <StatTile label="Ingest" value={String(board.health.ingestions)} />
+            <StatTile label="Pass" value={String(board.health.passed)} tone="pass" />
+            <StatTile label="Reject" value={String(board.health.rejected)} tone="fail" />
+            <StatTile label="Avg pipe" value={`${board.health.avgPipelineMs}ms`} />
+            <StatTile label="Filter" value={`${rejectRate}%`} tone="brand" />
           </div>
-        </section>
 
-        <section className="overflow-hidden bg-background py-16 sm:py-24">
-          <div className="mx-auto max-w-3xl px-4 text-center">
-            <h2 className="mb-12 text-3xl font-semibold tracking-[-0.5px]">Use the rails you already trust.</h2>
-          </div>
-          <div className="agent-marquee group relative mx-auto max-w-2xl">
-            <div className="agent-marquee__track flex w-max">
-              {[0, 1].map((copy) => (
-                <ul key={copy} className="flex shrink-0 items-center gap-8 pr-8">
-                  {SOURCES.map((name) => (
-                    <li
-                      key={`${copy}-${name}`}
-                      className="font-mono text-sm tracking-[0.5px] text-muted-foreground"
-                    >
-                      {name}
-                    </li>
-                  ))}
-                </ul>
+          <div className="mt-6 flex flex-wrap items-center gap-2">
+            <nav className="flex gap-1 rounded-3xl border border-border p-1 lg:hidden">
+              {(["radar", "shield", "payload"] as View[]).map((id) => (
+                <button
+                  key={id}
+                  onClick={() => setView(id)}
+                  className={cn(
+                    "rounded-2xl px-4 py-2 text-sm capitalize",
+                    view === id ? "bg-foreground text-background" : "text-muted-foreground",
+                  )}
+                >
+                  {id}
+                </button>
               ))}
-            </div>
+            </nav>
+            <Pill
+              className="border border-border bg-card text-muted-foreground"
+              onClick={() => void run("/api/tick")}
+              disabled={!!busy}
+            >
+              Rotate once
+            </Pill>
+            <Pill className="border border-border bg-transparent text-brand" onClick={() => void run("/api/reset")}>
+              Clear log
+            </Pill>
           </div>
-        </section>
 
-        <section className="relative px-4 py-16 sm:px-8 sm:py-20 lg:px-[30px] lg:py-24">
-          <div className="mx-auto max-w-7xl">
-            <div className="mb-8 flex flex-wrap items-center justify-between gap-3 lg:hidden">
-              <nav className="flex gap-1 rounded-3xl border border-border p-1">
-                {(["radar", "shield", "payload"] as View[]).map((id) => (
-                  <button
-                    key={id}
-                    onClick={() => setView(id)}
-                    className={cn(
-                      "rounded-2xl px-4 py-2 text-sm capitalize",
-                      view === id ? "bg-foreground text-background" : "text-muted-foreground",
-                    )}
-                  >
-                    {id}
-                  </button>
-                ))}
-              </nav>
-            </div>
-            <div className="mb-6 flex flex-wrap gap-2">
-              <Pill
-                className="border border-border bg-background text-muted-foreground"
-                onClick={() => void run("/api/tick")}
-                disabled={!!busy}
-              >
-                Rotate once
-              </Pill>
-              <Pill
-                className="border border-border bg-transparent text-brand-light"
-                onClick={() => void run("/api/reset")}
-              >
-                Clear log
-              </Pill>
-            </div>
-            <div className="grid items-start gap-8 xl:grid-cols-[1.35fr_0.85fr] xl:gap-16">
-              <div className="relative w-full overflow-hidden rounded-[var(--mockup-shell-radius)] sm:min-h-[420px] lg:aspect-[4/3]">
-                <div className="scenic absolute inset-0" />
-                <div className="absolute inset-0 bg-background/25" />
-                <div className="relative z-10 p-4 sm:p-8 lg:flex lg:h-full lg:items-center">
-                  <MockupShell title="clarus · bnb chain desk" className="w-full max-w-[620px] mx-auto">
-                    {view === "radar" ? <RadarView events={board.events} results={board.results} /> : null}
-                    {view === "shield" ? (
-                      <ShieldView result={latestInspect} onSelect={setSelected} results={board.results} />
-                    ) : null}
-                    {view === "payload" ? <PayloadView result={latestPass} /> : null}
-                  </MockupShell>
-                </div>
+          <div className="mt-6 grid items-start gap-6 xl:grid-cols-[1.35fr_0.85fr] xl:gap-10">
+            <div className="relative w-full overflow-hidden rounded-[var(--mockup-shell-radius)] sm:min-h-[420px]">
+              <div className="scenic absolute inset-0" />
+              <div className="relative z-10 p-4 sm:p-6">
+                <MockupShell title="clarus · bnb chain" className="w-full">
+                  {view === "radar" ? <RadarView events={board.events} results={board.results} /> : null}
+                  {view === "shield" ? (
+                    <ShieldView result={latestInspect} onSelect={setSelected} results={board.results} />
+                  ) : null}
+                  {view === "payload" ? <PayloadView result={latestPass} /> : null}
+                </MockupShell>
               </div>
-              <aside className="space-y-6">
-                <PipelineStrip result={view === "payload" ? latestPass : latestInspect} />
-                <EventLog events={board.events} onPick={(e) => e.result && setSelected(e.result)} />
-              </aside>
             </div>
+            <aside className="space-y-6">
+              <PipelineStrip result={view === "payload" ? latestPass : latestInspect} />
+              <EventLog events={board.events} onPick={(e) => e.result && setSelected(e.result)} />
+            </aside>
           </div>
-        </section>
+        </div>
       </main>
     </div>
   );
@@ -320,35 +269,37 @@ function RadarView({ events, results }: { events: PipelineEvent[]; results: Eval
   return (
     <div>
       <div className="flex items-start justify-between gap-4">
-        <div className="space-y-3">
-          <Eyebrow>Delegation</Eyebrow>
-          <h2 className="text-balance text-2xl font-medium tracking-[-0.5px] sm:text-3xl lg:text-4xl">
-            Attention radar
-          </h2>
-          <p className="max-w-[500px] text-pretty text-base leading-relaxed text-muted-foreground sm:text-lg">
-            Live rotation across GeckoTerminal BSC pools and Dexscreener profiles. GoPlus scores mint, honeypot, LP lock,
-            and holders before anything reaches a wallet.
+        <div className="space-y-2">
+          <Eyebrow>Radar</Eyebrow>
+          <h2 className="text-2xl font-medium tracking-[-0.5px] sm:text-3xl">Live ingest</h2>
+          <p className="max-w-[500px] text-sm leading-relaxed text-muted-foreground sm:text-base">
+            GeckoTerminal and Dexscreener CAs on BNB Chain, scored by GoPlus before a wallet link is offered.
           </p>
         </div>
-        <div className="relative hidden h-24 w-24 overflow-hidden rounded-full border border-border sm:block">
+        <div className="relative hidden h-20 w-20 overflow-hidden rounded-full border border-border sm:block">
           <div className="radar-sweep absolute inset-0 rounded-full" />
           <div className="absolute left-1/2 top-1/2 size-2 -translate-x-1/2 -translate-y-1/2 rounded-full bg-brand" />
           <span className="pulse-dot absolute left-1/2 top-1/2 size-2 -translate-x-1/2 -translate-y-1/2 rounded-full bg-brand" />
         </div>
       </div>
-      <div className="agent-marquee mt-5 overflow-hidden border-y border-border">
-        <div className="agent-marquee__track flex w-max gap-8 py-2 font-mono text-[11px] tracking-[0.5px] text-brand-light">
-          {(results.length ? [...results, ...results] : [{ token: { symbol: "WAIT", contractAddress: "0x" }, status: "IDLE" }]).slice(0, 24).map((r, i) => (
-            <span key={`${r.token.contractAddress}-${i}`}>
-              {r.token.symbol} {r.status} {shortCa(r.token.contractAddress)}
-            </span>
-          ))}
+      <div className="agent-marquee mt-4 overflow-hidden border-y border-border">
+        <div className="agent-marquee__track flex w-max gap-8 py-2 font-mono text-[11px] tracking-[0.4px] text-brand">
+          {(results.length
+            ? [...results, ...results]
+            : [{ token: { symbol: "WAIT", contractAddress: "0x" }, status: "IDLE" }]
+          )
+            .slice(0, 24)
+            .map((r, i) => (
+              <span key={`${r.token.contractAddress}-${i}`}>
+                {r.token.symbol} {r.status} {shortCa(r.token.contractAddress)}
+              </span>
+            ))}
         </div>
       </div>
       <ul className="mt-4 space-y-2">
         {ingest.length === 0 ? (
           <li className="border border-dashed border-border p-4 text-sm text-muted-foreground">
-            No ingestions yet. Rotation pulls real launches automatically. You can also paste a CA.
+            No ingestions yet. Rotation starts automatically, or paste a CA.
           </li>
         ) : (
           ingest.map((e) => (
@@ -357,7 +308,7 @@ function RadarView({ events, results }: { events: PipelineEvent[]; results: Eval
                 <div className="text-sm">{e.name}</div>
                 <div className="font-mono text-[11px] text-muted-foreground">{e.detail}</div>
               </div>
-              <code className="font-mono text-[11px] text-brand-light">{shortCa(e.ca)}</code>
+              <code className="font-mono text-[11px] text-brand">{shortCa(e.ca)}</code>
             </li>
           ))
         )}
@@ -377,13 +328,11 @@ function ShieldView({
 }) {
   return (
     <div>
-      <Eyebrow>Visibility</Eyebrow>
-      <h2 className="mt-3 text-balance text-2xl font-medium tracking-[-0.5px] sm:text-3xl lg:text-4xl">
-        Four-layer shield
-      </h2>
-      <p className="mt-3 max-w-[500px] text-pretty text-base leading-relaxed text-muted-foreground sm:text-lg">
-        Mint/freeze, LP burn, holder cap ≤3.5%, bundle cluster, then volume/MC ≥ 80% and 2% slippage sizing. Any fail
-        terminates the task.
+      <Eyebrow>Shield</Eyebrow>
+      <h2 className="mt-2 text-2xl font-medium tracking-[-0.5px] sm:text-3xl">Six-gate firewall</h2>
+      <p className="mt-2 max-w-[500px] text-sm leading-relaxed text-muted-foreground sm:text-base">
+        Mint/freeze, LP ≥95%, holder cap ≤3.5%, bundle cluster, volume/MC ≥80%, 2% slippage size. Any fail stops the
+        task.
       </p>
       {result ? (
         <div className="mt-5">
@@ -403,21 +352,21 @@ function ShieldView({
                   </span>
                   <span className={statusTone(check.status)}>{check.status}</span>
                 </div>
-                <p className="mt-2 text-sm text-foreground/90">{check.detail}</p>
+                <p className="mt-2 text-sm">{check.detail}</p>
                 {check.value ? <p className="mt-1 font-mono text-[11px] text-muted-foreground">{check.value}</p> : null}
               </li>
             ))}
           </ol>
         </div>
       ) : (
-        <p className="mt-8 text-sm text-muted-foreground">Inspect a token from the live radar.</p>
+        <p className="mt-8 text-sm text-muted-foreground">Inspect a token from radar.</p>
       )}
       <div className="mt-6 grid gap-2">
         {results.slice(0, 6).map((r) => (
           <button
             key={r.token.contractAddress + r.elapsedMs}
             onClick={() => onSelect(r)}
-            className="flex items-center justify-between border border-border bg-background/40 px-3 py-2 text-left text-sm transition-colors hover:bg-muted/60"
+            className="flex items-center justify-between border border-border bg-background px-3 py-2 text-left text-sm transition-colors hover:bg-muted/60"
           >
             <span>
               {r.token.symbol} · {r.token.name}
@@ -434,13 +383,11 @@ function PayloadView({ result }: { result: EvaluationResult | null }) {
   if (!result || result.status !== "PASSED" || !result.execution) {
     return (
       <div>
-        <Eyebrow>Coverage</Eyebrow>
-        <h2 className="mt-3 text-balance text-2xl font-medium tracking-[-0.5px] sm:text-3xl lg:text-4xl">
-          No clear payload yet
-        </h2>
-        <p className="mt-3 max-w-[500px] text-pretty text-base leading-relaxed text-muted-foreground sm:text-lg">
-          The agent does not trade. When a token clears every gate, a PancakeSwap / Binance Web3 deep link appears here
-          for FaceID or passcode signing in your wallet app.
+        <Eyebrow>Payload</Eyebrow>
+        <h2 className="mt-2 text-2xl font-medium tracking-[-0.5px] sm:text-3xl">No payload yet</h2>
+        <p className="mt-2 max-w-[500px] text-sm leading-relaxed text-muted-foreground sm:text-base">
+          Clarus does not trade. A PancakeSwap / Binance Web3 deep link appears here only after every gate passes. You
+          sign in your wallet.
         </p>
       </div>
     );
@@ -449,10 +396,10 @@ function PayloadView({ result }: { result: EvaluationResult | null }) {
   const { execution: payload, token } = result;
   return (
     <div>
-      <Eyebrow>Coverage</Eyebrow>
-      <h2 className="mt-3 text-balance text-2xl font-medium tracking-[-0.5px] sm:text-3xl">Verified insight</h2>
-      <div className="mt-5 border border-brand/40 bg-brand/10 p-5">
-        <p className="font-mono text-xs tracking-[0.4px] text-brand-light">Alert · manual signature required</p>
+      <Eyebrow>Payload</Eyebrow>
+      <h2 className="mt-2 text-2xl font-medium tracking-[-0.5px] sm:text-3xl">Wallet link</h2>
+      <div className="mt-5 border border-brand/30 bg-brand/5 p-5">
+        <p className="font-mono text-xs tracking-[0.4px] text-brand">Manual signature required</p>
         <h3 className="mt-2 text-2xl font-medium tracking-[-0.5px]">
           {token.name} <span className="text-muted-foreground">${token.symbol}</span>
         </h3>
@@ -475,7 +422,7 @@ function PayloadView({ result }: { result: EvaluationResult | null }) {
             <dd>{payload.expectedSlippagePct.toFixed(2)}%</dd>
           </div>
         </dl>
-        <p className="mt-4 text-sm text-foreground/90">{payload.quoteSummary}</p>
+        <p className="mt-4 text-sm">{payload.quoteSummary}</p>
         <div className="mt-5 flex flex-wrap gap-2">
           <a
             className="rounded-2xl bg-foreground px-4 py-3 text-xs font-semibold tracking-[-0.5px] text-background hover:opacity-90"
@@ -486,7 +433,7 @@ function PayloadView({ result }: { result: EvaluationResult | null }) {
             Open PancakeSwap
           </a>
           <a
-            className="rounded-3xl border border-border bg-background px-4 py-3 text-xs tracking-[-0.5px] text-foreground hover:bg-muted/60"
+            className="rounded-3xl border border-border bg-card px-4 py-3 text-xs tracking-[-0.5px] hover:bg-muted/60"
             href={payload.binanceWeb3Url}
             target="_blank"
             rel="noreferrer"
@@ -503,7 +450,7 @@ function PayloadView({ result }: { result: EvaluationResult | null }) {
           </a>
         </div>
         <p className="mt-4 font-mono text-[11px] text-muted-foreground">
-          Deep link only. Signing stays in Binance Web3 or your BNB Chain wallet.
+          Deep link only. Signing stays in the wallet.
         </p>
       </div>
     </div>
@@ -524,7 +471,7 @@ function PipelineStrip({ result }: { result: EvaluationResult | null }) {
   const failedAt = result?.checks.findIndex((c) => c.status === "fail") ?? -1;
   return (
     <div className="glass p-5">
-      <Eyebrow>Feedback loop</Eyebrow>
+      <Eyebrow>IF / THEN</Eyebrow>
       <ol className="mt-4 space-y-3">
         {stages.map((stage, i) => {
           let tone = "text-muted-foreground";
@@ -549,12 +496,8 @@ function PipelineStrip({ result }: { result: EvaluationResult | null }) {
               <span className="flex items-center gap-3">
                 <span
                   className={cn(
-                    "grid size-6 place-items-center rounded-full border text-[10px] font-mono",
-                    mark === "Halt"
-                      ? "border-destructive"
-                      : mark === "Ok"
-                        ? "border-pass"
-                        : "border-border",
+                    "grid size-6 place-items-center rounded-full border font-mono text-[10px]",
+                    mark === "Halt" ? "border-destructive" : mark === "Ok" ? "border-pass" : "border-border",
                   )}
                 >
                   {i + 1}
@@ -579,10 +522,10 @@ function EventLog({
 }) {
   return (
     <div className="glass flex-1 p-5">
-      <Eyebrow>In the wild</Eyebrow>
+      <Eyebrow>Terminal</Eyebrow>
       <ul className="mt-4 max-h-[420px] space-y-px overflow-auto bg-border">
         {events.length === 0 ? (
-          <li className="bg-card p-4 text-sm text-muted-foreground">waiting for workflow events…</li>
+          <li className="bg-card p-4 text-sm text-muted-foreground">waiting for events…</li>
         ) : (
           events.slice(0, 40).map((event) => (
             <li key={event.id} className="bg-card">
@@ -590,9 +533,7 @@ function EventLog({
                 onClick={() => onPick(event)}
                 className="w-full p-3 text-left transition-colors hover:bg-muted/60"
               >
-                <span className="font-mono text-[11px] uppercase tracking-[0.4px] text-brand-light">
-                  {event.kind}
-                </span>{" "}
+                <span className="font-mono text-[11px] uppercase tracking-[0.4px] text-brand">{event.kind}</span>{" "}
                 <span className="text-sm">{event.name}</span>
                 <div className="text-sm text-muted-foreground">{event.detail}</div>
               </button>
