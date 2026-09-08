@@ -1,55 +1,103 @@
-<p align="center">
-  <img src="public/clarus-mark.png" alt="Clarus" width="120" />
-</p>
-
 # Clarus
 
-**Binance Agent OS Mini Hackathon — Track A skill.** BNB Chain firewall. Not a dashboard.
+A read-only Agent OS **skill** that turns BNB Chain meme attention into a fail-closed risk report and, only on a full pass, an **unsigned** PancakeSwap / Binance Web3 payload.
 
-Clarus is an Agent OS skill plus HTTP MCP tools. It evaluates live BEP-20 launches and, only if every gate passes, returns an unsigned PancakeSwap / Binance Web3 link. The human signs. No keys, no broadcast, no Telegram, no Solana.
+It never executes a trade. It never holds keys.
 
-## Skill
+Built for the Binance Agent OS Mini Hackathon, Track A.
 
-- [`SKILL.md`](./SKILL.md) — load this in Agent OS
-- [`agent/workflow.json`](./agent/workflow.json) — IF/THEN gates
-- [`agent/mcp.json`](./agent/mcp.json) — MCP wiring
-- [`agent.json`](./agent.json) — contest manifest
+---
 
-## Run
+## What It Does
 
-```bash
-npm install
-npm test
-npm run build
-npm start
+Four phases from the contest blueprint, with execution stripped:
+
+1. **Attention ingest**: live BSC new/trending pools (GeckoTerminal, Dexscreener). Pair ticker ↔ CA. No X/Telegram scrape.
+2. **Safety filter**: mint/owner, LP ≥95% locked/burned, top EOA holder ≤3.5%, no same-origin cluster. Fail closed.
+3. **Confluence**: 24h volume ≥ 80% of market cap; hypothetical $50 clip ≤ 2% impact.
+4. **Unsigned payload**: PancakeSwap URL + Binance Web3 deep link. Operator signs in their wallet or discards.
+
+---
+
+## Repository Structure
+
+```text
+.
+├── ARTICLE.md                  # Contest write-up (read-only agent thesis)
+├── CLAUDE.md                   # Agent system prompt & progressive disclosure
+├── SUBMISSION.md               # Track A demo prompts
+├── LICENSE                     # MIT License
+├── install.sh                  # Local installer script
+├── install-custom.sh           # Custom environment installer
+├── skill/
+│   ├── SKILL.md                # Skill entrypoint & routing
+│   ├── attention-ingest.md     # Phase 1
+│   ├── safety-filter.md        # Phase 2
+│   ├── confluence.md           # Phase 3
+│   ├── unsigned-payload.md     # Phase 4 — no keys, no broadcast
+│   ├── risk-report.md          # RugCheck-emulator printout
+│   ├── hackathon-submission.md
+│   ├── resources.md            # GoPlus / Dexscreener / GeckoTerminal
+│   └── examples/
+├── agents/
+│   ├── ingest-analyst.md
+│   ├── firewall-verifier.md
+│   ├── confluence-analyst.md
+│   ├── payload-coach.md
+│   └── skill-demo-coach.md
+├── commands/
+│   ├── ingest-sprint.md
+│   ├── evaluate-ca.md
+│   ├── risk-report.md
+│   └── skill-demo.md
+├── rules/
+│   ├── no-execution.md
+│   └── firewall-integrity.md
+└── tests/
+    └── validate_structure.sh
 ```
 
-Wire Agent OS to `http://localhost:3000/api/mcp`.
+---
+
+## Installation
+
+Install the skill locally into your agent environment:
 
 ```bash
-curl -s http://localhost:3000/api/mcp
-curl -s -X POST http://localhost:3000/api/mcp \
-  -H 'content-type: application/json' \
-  -d '{"jsonrpc":"2.0","id":1,"method":"tools/list"}'
+./install.sh -y
 ```
 
-## Tools
+Or for custom target paths:
 
-| Tool | Side effects |
-| --- | --- |
-| `ingest_recent` | read-only live BSC ingest |
-| `evaluate_token` | read-only GoPlus + firewall |
-| `build_swap_payload` | none — unsigned URLs only |
-| `get_board` | read session log |
-| `get_health` | read counters + BNBUSDT |
+```bash
+./install-custom.sh
+```
 
-## Gates
+Installers copy `skill/` into `~/.agents/skills/clarus/` (Markdown only, no network).
 
-1. Not mintable / no hidden owner / not honeypot-pausable
-2. LP ≥ 95% locked or burned
-3. Largest non-AMM holder ≤ 3.5%
-4. No bundle cluster
-5. Volume ≥ 80% of market cap
-6. ~$50 clip ≤ 2% slippage
+---
 
-Pass → wallet deep link. Fail → stop and log.
+## Validation
+
+```bash
+bash tests/validate_structure.sh
+```
+
+---
+
+## Demo
+
+```
+/skill-demo
+/ingest-sprint
+/evaluate-ca 0x<bsc token>
+/risk-report
+```
+
+Every report ends with: **Clarus does not execute this swap.**
+
+---
+
+## License
+
+MIT
