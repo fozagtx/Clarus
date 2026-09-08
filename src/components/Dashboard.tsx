@@ -290,10 +290,10 @@ export function Dashboard() {
               </Pill>
             </div>
             <div className="grid items-start gap-8 xl:grid-cols-[1.35fr_0.85fr] xl:gap-16">
-              <div className="relative w-full overflow-hidden sm:min-h-[300px] lg:aspect-4/3">
+              <div className="relative w-full overflow-hidden rounded-[var(--mockup-shell-radius)] sm:min-h-[420px] lg:aspect-[4/3]">
                 <div className="scenic absolute inset-0" />
-                <div className="absolute inset-0 bg-background/35" />
-                <div className="relative z-10 p-3 sm:p-6 lg:flex lg:h-full lg:items-center">
+                <div className="absolute inset-0 bg-background/25" />
+                <div className="relative z-10 p-4 sm:p-8 lg:flex lg:h-full lg:items-center">
                   <MockupShell title="clarus · bnb chain desk" className="w-full max-w-[620px] mx-auto">
                     {view === "radar" ? <RadarView events={board.events} results={board.results} /> : null}
                     {view === "shield" ? (

@@ -43,7 +43,7 @@ export function MockupShell({
   return (
     <div
       className={cn(
-        "overflow-hidden rounded-[var(--mockup-shell-radius)] border border-border bg-[color-mix(in_srgb,var(--card)_72%,transparent)] shadow-[inset_0_1px_0_rgba(251,251,249,0.08)] backdrop-blur-2xl",
+        "glass overflow-hidden rounded-[var(--mockup-shell-radius)]",
         className,
       )}
     >
