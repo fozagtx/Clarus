@@ -15,7 +15,7 @@ required_files=(
   "skill/confluence.md"
   "skill/unsigned-payload.md"
   "skill/risk-report.md"
-  "skill/hackathon-submission.md"
+  "docs/running-steps.md"
   "skill/resources.md"
   "agents/ingest-analyst.md"
   "agents/firewall-verifier.md"
@@ -48,7 +48,7 @@ if ! grep -q '^description: .*Use when ' "$ROOT_DIR/skill/SKILL.md"; then
   exit 1
 fi
 
-for linked in attention-ingest.md safety-filter.md confluence.md unsigned-payload.md risk-report.md hackathon-submission.md resources.md; do
+for linked in attention-ingest.md safety-filter.md confluence.md unsigned-payload.md risk-report.md resources.md; do
   if ! grep -q "$linked" "$ROOT_DIR/skill/SKILL.md"; then
     echo "SKILL.md does not link $linked" >&2
     exit 1

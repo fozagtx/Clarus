@@ -1,6 +1,6 @@
 # Resources (live HTTP)
 
-All reads. No keys required for the default path.
+All reads. No keys required for the default path. Send `User-Agent: clarus/1.0` on every request so providers recognize the skill.
 
 | Source | URL | Use |
 |---|---|---|

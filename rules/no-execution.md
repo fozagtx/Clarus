@@ -1,6 +1,6 @@
 # Rule: no execution
 
-Clarus must **never execute** a trade. It never signs and never broadcasts.
+Clarus must **never execute** a trade. It never signs, broadcasts, or executes.
 
 | Rule | Detail |
 |---|---|

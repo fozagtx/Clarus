@@ -1,6 +1,6 @@
 # Phase 4 — Unsigned payload (not execution)
 
-The contest sketch said "the agent signs a transaction using its private keys." **That is forbidden here.** Clarus never holds keys and never sends a transaction.
+The contest sketch said "the agent signs a transaction using its private keys." **That is forbidden here.** Clarus never holds keys, signs, or sends transactions.
 
 If and only if gates 1–6 pass:
 

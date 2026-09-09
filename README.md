@@ -1,96 +1,82 @@
 # Clarus
 
-A contract address hits BNB Chain. Clarus does not buy it.
+A safety check before you buy a random token on the Binance network.
 
-It reads GoPlus and Dexscreener, runs six gates, and prints REJECT or PASS. The first failed gate stops the run. It never signs a swap. It never asks for a key.
+Most of these tokens are scams. The creators can print more coins whenever they want, lock the liquidity so you can't sell, hold 90% of the supply themself, or copy the story of a popular coin nobody actually checked. Clarus reads the token's public data and answers six questions for you. If one answer is bad, it tells you **no** and you don't get scammed.
 
-People lose money on mintable tokens, unlocked LP, a wallet sitting on too much supply, and a ticker story nobody checked. Clarus is that check. You read the report before you touch the trade.
+Clarus never buys, signs, or asks for your keys. It only ever hands you a link, and you decide.
 
-If all six gates pass, you get a PancakeSwap URL and a Binance Web3 link. You still sign in your own wallet. A failed gate means no URL.
+Built for the Binance Agent OS Mini Hackathon (Track A). Markdown only, nothing to compile.
 
-Track A skill for the Binance Agent OS Mini Hackathon. Markdown only. No app. No `npm`.
+![Clarus](assets/clarus.png)
 
-Binance Agent OS: paste [`skill/SKILL.md`](https://raw.githubusercontent.com/fozagtx/Clarus/main/skill/SKILL.md). Do not hunt the tree.
+Setup and HTTP connectivity details: [Agent OS compatibility](docs/agent-os-compatibility.md) and [running steps](docs/running-steps.md).
 
-## Gates
+---
 
-| # | Check | Pass |
+## What it checks
+
+| Question asked | What it looks for | Passes if |
 |---|---|---|
-| 1 | Mint, hidden owner, honeypot, pause, blacklist | All off |
-| 2 | LP locked or burned | ≥ 95% |
-| 3 | Largest non-AMM holder | ≤ 3.5% of supply |
-| 4 | Same-origin / same-creator cluster | Absent |
-| 5 | 24h volume vs market cap | Volume ≥ 80% of MC |
-| 6 | Hypothetical $50 clip vs WBNB pool | ≤ 2% impact |
+| Can the creators take your money? | Mint, hidden owner, honeypot, pause, blacklist | Nothing sketchy, all off |
+| Can they pull the rug? | Is the trading liquidity locked or burned | At least 95% secured |
+| Does someone own too much? | The biggest wallet besides the exchange | 3.5% of supply or less |
+| Is this a repeat offender? | Link to the creator's other, earlier projects | Clean record |
+| Is anyone actually trading? | 24h volume vs. how much money is in it | Real volume ≥ 80% of market cap |
+| Can you sell without crashing the price? | What a $50 sell would do to the pool | Price impact under 2% |
 
-Data: GeckoTerminal and Dexscreener for new BSC pools, GoPlus `token_security/56` for the contract, Dexscreener again for volume, cap, and TVL. Missing data is a reject. Invented numbers are forbidden.
+The answers come from live data (GoPlus, Dexscreener, and GeckoTerminal). If the data can't be found, it counts as a **no**. Clarus never invents numbers.
 
-## Install
+Six good answers → you get an unsigned PancakeSwap link and a Binance Web3 link. You open it, review it, and only then sign in your own wallet.
 
-```bash
-git clone https://github.com/fozagtx/Clarus.git
-cd Clarus
-bash tests/validate_structure.sh
-chmod +x install.sh install-custom.sh
-./install.sh -y
-```
+Any bad answer → the link is withheld. Done.
 
-`./install.sh -y` copies `skill/` to `~/.agents/skills/clarus/`.
+---
 
-| Method | Command | Lands in |
-|---|---|---|
-| Default | `./install.sh -y` | `~/.agents/skills/clarus/` |
-| Pick a path | `./install-custom.sh` | `~/.agents`, `~/.claude/skills`, `./skills`, or a path you type |
-| Manual | `cp -R skill/. ~/.agents/skills/clarus/` | Same files |
-| Binance Agent OS | [`https://raw.githubusercontent.com/fozagtx/Clarus/main/skill/SKILL.md`](https://raw.githubusercontent.com/fozagtx/Clarus/main/skill/SKILL.md) | Refresh the agent |
+## How to use it
 
-That cell is the file. Copy it. Paste this into the agent, then refresh:
+Paste this into Binance Agent OS, then refresh:
 
 ```text
 Load https://raw.githubusercontent.com/fozagtx/Clarus/main/skill/SKILL.md
-Never sign. Never ask for keys.
 ```
 
-Same file in the repo: [skill/SKILL.md](skill/SKILL.md).
-
-No installer hits the network. `bash tests/validate_structure.sh` should print `Structure validation passed.`
-
-Keep `agents/`, `commands/`, and `rules/` next to `skill/`. `skill/SKILL.md` points at them.
-
-## Run
-
-Tell the agent the Install paste block, or load [skill/SKILL.md](skill/SKILL.md). Never sign. Never ask for keys.
-
-| You type | What happens |
+| You say | It does |
 |---|---|
-| `/ingest-sprint` | Up to 8 live BSC CAs. No swap URL. |
-| `/evaluate-ca 0x…` | Six gates on that address. Prints the report. |
-| `/risk-report` | Last report again |
-| `/skill-demo` | Ingest, one evaluate, report |
+| `/evaluate-ca 0x…` | Runs the six questions on one token, prints the report |
+| `/ingest-sprint` | Finds up to 8 tokens people are talking about right now |
+| `/risk-report` | Shows the last report again |
+| `/skill-demo` | Walks through the whole thing end to end |
+
+You can also just say in plain words:
 
 ```text
-Evaluate CA 0x<40 hex> on BNB Chain with the Clarus gates.
-Print the risk report. Do not execute a swap.
+Check this token 0x<address> on BNB Chain.
+Is it safe? Do not buy anything.
 ```
 
-Every report ends with: **Clarus does not execute this swap.**
+---
 
-REJECT means payload is `none`. That is a finished run. PASS (all six) prints the two unsigned URLs. If GoPlus or Dexscreener errors, the agent says so and rejects.
+## Run it locally
 
-## Files
+```bash
+git clone https://github.com/fozagtx/Clarus.git && cd Clarus
+bash tests/validate_structure.sh
+./install.sh -y
+```
 
-| Path | What it is |
+The installer copies the skill to `~/.agents/skills/clarus/`, ready for your agent. Run the structure test and you should see `Structure validation passed.` It checks the kit is complete and that nothing in it can execute a trade.
+
+---
+
+## What's in the repo
+
+| Folder | Holds |
 |---|---|
-| [skill/SKILL.md](skill/SKILL.md) | Load this |
-| [skill/attention-ingest.md](skill/attention-ingest.md) | New/trending BSC pools |
-| [skill/safety-filter.md](skill/safety-filter.md) | Gates 1–4 |
-| [skill/confluence.md](skill/confluence.md) | Gates 5–6 |
-| [skill/unsigned-payload.md](skill/unsigned-payload.md) | PancakeSwap and Binance Web3 URLs, unsigned |
-| [skill/risk-report.md](skill/risk-report.md) | Report shape |
-| [skill/resources.md](skill/resources.md) | HTTP endpoints |
-| [commands/](commands/) | The slash commands above |
-| [rules/no-execution.md](rules/no-execution.md) | No keys, no broadcast |
-| [rules/firewall-integrity.md](rules/firewall-integrity.md) | First fail = REJECT |
-| [tests/validate_structure.sh](tests/validate_structure.sh) | Kit check |
+| `skill/` | Everything the agent needs, entry point is `skill/SKILL.md` |
+| `agents/` | The helper roles for each step |
+| `commands/` | The slash commands above |
+| `rules/` | Hard rules: keys stay with you, one bad answer = reject |
+| `tests/` | The structure validator |
 
 MIT license.
