@@ -4,9 +4,7 @@ A step-by-step guide to replicating Clarus: installing it, loading it into an ag
 
 ## Overview of what you're replicating
 
-Clarus is a markdown skill, not an app. It is a set of instructions that turn an AI agent into a token safety checker. The skill tells the agent which public APIs to call (GoPlus, Dexscreener, GeckoTerminal) and how to score a BNB Chain token against six safety gates.
-
-There is nothing to compile. There is no server. No signing, no keys, no trading.
+Clarus is a markdown skill that turns an AI agent into a token safety checker. The skill tells the agent which public APIs to call (GoPlus, Dexscreener, GeckoTerminal) and how to score a BNB Chain token against six safety gates.
 
 ## Step 1: Get the files
 
